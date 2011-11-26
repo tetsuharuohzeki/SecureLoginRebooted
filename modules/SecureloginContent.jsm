@@ -76,10 +76,11 @@ SecureloginContent.prototype = {
 
 	/*
 	 * Search login data in the given window.
-	 * @param {Window} aWindow
+	 * @param {XULElement} aBrowser
+	 * @param {Window}     aContentWindow
 	 */
-	searchLogin: function (aBrowser, aWindow) {
-		let window   = aWindow;
+	searchLogin: function (aBrowser, aContentWindow) {
+		let window   = aContentWindow;
 		let document = window.document;
 		let forms    = document.forms;
 		if (forms && forms.length > 0) {
@@ -101,7 +102,7 @@ SecureloginContent.prototype = {
 					// Store the array of founded SecureLoginInfo.
 					this.secureLoginInfoMap.set(aBrowser, infosArray);
 					// Pass the array of username to UI parts.
-					this.notifyLoginsFound(aBrowser, infosArray, aWindow);
+					this.notifyLoginsFound(aBrowser, infosArray, aContentWindow);
 				}
 
 			}
