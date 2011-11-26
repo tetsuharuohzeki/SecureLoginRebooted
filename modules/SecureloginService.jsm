@@ -111,6 +111,17 @@ var SecureloginService = {
 		return useProtection;
 	},
 
+	/*
+	 * @param {Window} aData
+	 * @param {string} aData
+	 * @param {object} aSubject
+	 */
+	notifyObservers: function (aWindow, aData, aSubject) {
+		aSubject.chromeWindow = aWindow;
+		let subject = { wrappedJSObject: aSubject };
+		Services.obs.notifyObservers(subject, "Securelogin", aData);
+	},
+
 	initialize: function () {
 	},
 

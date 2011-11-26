@@ -154,9 +154,7 @@ SecureloginChrome.prototype = {
 	},
 
 	notifyObserver: function (aData, aSubject) {
-		aSubject.chromeWindow = this.window;
-		let subject = { wrappedJSObject: aSubject };
-		Services.obs.notifyObservers(subject, "Securelogin", aData);
+		SecureloginService.notifyObservers(this.window, aData, aSubject);
 	},
 
 	/* nsIObserver */

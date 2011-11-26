@@ -218,9 +218,7 @@ SecureloginContent.prototype = {
 	 * @param {object} aSubject
 	 */
 	notifyObserver: function (aData, aSubject) {
-		aSubject.chromeWindow = this.global;
-		let subject = { wrappedJSObject: aSubject };
-		Services.obs.notifyObservers(subject, "Securelogin", aData);
+		SecureloginService.notifyObservers(this.global, aData, aSubject);
 	},
 
 	/*
