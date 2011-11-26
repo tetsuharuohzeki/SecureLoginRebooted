@@ -290,6 +290,19 @@ SecureloginContent.prototype = {
 		// Set key & value.
 		for (let i = 0, l = elements.length; i < l; i++) {
 			let element = elements[i];
+
+			/*
+			 * NOTE:
+			 * W3C HTML5 specification,
+			 * 4.10.22.4 Constructing the form data set, 3.1.
+			 * <http://www.w3.org/TR/html5/association-of-controls-and-forms.html>
+			 *
+			 * Skip if the element is disabled.
+			 */
+			if (element.disabled) {
+				continue;
+			}
+
 			switch (element.type) {
 				case "checkbox":
 				case "radio":
