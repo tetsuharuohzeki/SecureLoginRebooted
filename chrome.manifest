@@ -1,0 +1,12 @@
+# packages
+content     securelogin                     content/
+skin        securelogin     classic/1.0     skin/classic/
+
+# modules
+resource    securelogin                     modules/
+
+# locales
+locale      securelogin     en-US           locale/en-US/
+
+# overlay
+overlay     chrome://browser/content/browser.xul chrome://securelogin/content/securelogin-browser.xul
