@@ -334,6 +334,23 @@ SecureloginContent.prototype = {
 					 * as the "login" button.
 					 */
 					break;
+				case "image":
+					/*
+					 * NOTE:
+					 * W3C HTML5 specification,
+					 * 4.10.22.4, Constructing the form data set, 3.3
+					 * <http://www.w3.org/TR/html5/association-of-controls-and-forms.html>
+					 *
+					 * Set coordinates if element's type is |image|.
+					 */
+					if (!element.name) {
+						setDataString("x", "1");
+						setDataString("y", "1");
+					}
+					else {
+						setDataString(element.name + "x", "1");
+						setDataString(element.name + "y", "1");
+					}
 				default:
 					if (element.name == aLoginInfo.usernameField) {
 						setDataString(aLoginInfo.usernameField, aLoginInfo.username);
