@@ -100,14 +100,8 @@ SecureloginContent.prototype = {
 				if (infosArray.length > 0) {
 					// Store the array of founded SecureLoginInfo.
 					this.secureLoginInfoMap.set(aBrowser, infosArray);
-
 					// Pass the array of username to UI parts.
-					let usernames = infosArray.map(function(elem){
-						return elem.username;
-					});
-					this.notifyObservers("loginFound", { contentWindow : aWindow,
-					                                    browser       : aBrowser,
-					                                    logins        : usernames });
+					this.notifyLoginsFound(aBrowser, infosArray, aWindow);
 				}
 
 			}
@@ -211,6 +205,21 @@ SecureloginContent.prototype = {
 	 */
 	highlightElement: function (aElement) {
 		let style = aElement.style;
+	},
+
+	/*
+	 * @param {XULElement} aBrowser
+	 * @param {Array}      aInfoArray
+	 * @param {Window}     aContentWindow
+	 */
+	notifyLoginsFound: function (aBrowser, aInfoArray, aContentWindow) {
+		let usernames = aInfoArray.map(function(elem){
+			return elem.username;
+		});
+
+		this.notifyObservers("loginFound", { contentWindow : aContentWindow,
+		                                     browser       : aBrowser,
+		                                     logins        : usernames });
 	},
 
 	/*
