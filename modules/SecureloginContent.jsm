@@ -293,6 +293,15 @@ SecureloginContent.prototype = {
 			switch (element.type) {
 				case "checkbox":
 				case "radio":
+					/*
+					 * NOTE:
+					 * W3C HTML5 specification,
+					 * 4.10.22.4 Constructing the form data set, 3.1.
+					 * <http://www.w3.org/TR/html5/association-of-controls-and-forms.html>
+					 *
+					 * Skip an |input| element whose type is |checkbox| or |radio|,
+					 * and it is not checked.
+					 */
 					if (element.checked) {
 						setDataString(element.name, element.value);
 					}
