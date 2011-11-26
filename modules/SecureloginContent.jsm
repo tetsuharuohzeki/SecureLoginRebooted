@@ -105,7 +105,7 @@ SecureloginContent.prototype = {
 					let usernames = infosArray.map(function(elem){
 						return elem.username;
 					});
-					this.notifyObserver("loginFound", { contentWindow : aWindow,
+					this.notifyObservers("loginFound", { contentWindow : aWindow,
 					                                    browser       : aBrowser,
 					                                    logins        : usernames });
 				}
@@ -217,7 +217,7 @@ SecureloginContent.prototype = {
 	 * @param {string} aData
 	 * @param {object} aSubject
 	 */
-	notifyObserver: function (aData, aSubject) {
+	notifyObservers: function (aData, aSubject) {
 		SecureloginService.notifyObservers(this.global, aData, aSubject);
 	},
 

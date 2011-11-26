@@ -114,7 +114,7 @@ SecureloginChrome.prototype = {
 	login: function () {
 		let browser = this.window.gBrowser.selectedBrowser;
 		let loginId = this.getLoginId(browser);
-		this.notifyObserver("login", { browser: browser, 
+		this.notifyObservers("login", { browser: browser, 
 		                               loginId: loginId });
 	},
 
@@ -149,11 +149,11 @@ SecureloginChrome.prototype = {
 
 	updateOnProgress: function (aBrowser, aWebProgress) {
 		let window = aWebProgress.DOMWindow;
-		this.notifyObserver("searchLogin", { contentWindow: window,
+		this.notifyObservers("searchLogin", { contentWindow: window,
 		                                     browser      : aBrowser });
 	},
 
-	notifyObserver: function (aData, aSubject) {
+	notifyObservers: function (aData, aSubject) {
 		SecureloginService.notifyObservers(this.window, aData, aSubject);
 	},
 
