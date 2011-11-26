@@ -338,12 +338,8 @@ SecureloginContent.prototype = {
 		if (method === "POST") {
 			// Create post data mime stream. (params: aStringData, aKeyword, aEncKeyword, aType)
 			let postData = this.global.getPostDataStream(aDataStr, "", "", "application/x-www-form-urlencoded");
-			// Load url in the browser.
-			aBrowser.loadURIWithFlags(aUrl,
-			                          Ci.nsIWebNavigation.LOAD_FLAGS_NONE,
-			                          aReferrer,
-			                          null,
-			                          postData);
+			// Load the url in the browser.
+			this._loadURI(aBrowser, aUrl, aReferrer, postData);
 		}
 		else if (method === "GET") {
 			// Remove existing parameters & add the parameter list to the uri.
@@ -355,15 +351,31 @@ SecureloginContent.prototype = {
 				aUrl = aUrl.substring(0, index + 1) + aDataStr;
 			}
 			// Load the uri in the browser.
-			aBrowser.loadURIWithFlags(aUrl,
-			                          Ci.nsIWebNavigation.LOAD_FLAGS_NONE,
-			                          aReferrer,
-			                          null,
-			                          postData);
+			this._loadURI(aBrowser, aUrl, aReferrer, null);
 		}
 		else {
 			let message = "Failed Login. HTTP " + method + " method is not supported by Secure Login";
 			Cu.reportError(message);
+		}
+	},
+
+	/*
+	 * @param {XULElement}     aBrowser
+	 * @param {string}         aUrl
+	 * @param {nsIURI}         aReferrer
+	 * @param {nsIInputStream} aPostData
+	 */
+	_loadURI: function (aBrowser, aUrl, aReferrer, aPostData) {
+		if (aPostData === undefined) {
+			aPostData = null;
+		}
+
+		let flags = Ci.nsIWebNavigation.LOAD_FLAGS_NONE;
+		try {
+			aBrowser.loadURIWithFlags(aUrl, flags, aReferrer, null, aPostData);
+		}
+		catch (e) {
+			Cu.reportError(e);
 		}
 	},
 
