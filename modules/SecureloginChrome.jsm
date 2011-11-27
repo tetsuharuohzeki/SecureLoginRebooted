@@ -68,11 +68,11 @@ SecureloginChrome.prototype = {
 		this.window = aChromeWindow;
 
 		aChromeWindow.addEventListener("load", this, false);
-		Services.obs.addObserver(this, "Securelogin", true);
+		Services.obs.addObserver(this, SecureloginService.OBSERVER_TOPIC, true);
 	},
 
 	destroy: function () {
-		Services.obs.removeObserver(this, "Securelogin");
+		Services.obs.removeObserver(this, SecureloginService.OBSERVER_TOPIC);
 		this.window = null;
 	},
 
@@ -165,7 +165,7 @@ SecureloginChrome.prototype = {
 
 	/* nsIObserver */
 	observe: function (aSubject, aTopic, aData) {
-		if (aTopic == "Securelogin") {
+		if (aTopic == SecureloginService.OBSERVER_TOPIC) {
 			let message = aSubject.wrappedJSObject;
 			switch (aData) {
 				case "loginFound":

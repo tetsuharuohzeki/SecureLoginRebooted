@@ -43,10 +43,14 @@ const Cu = Components.utils;
 const kPREF_NAME     = "extensions.securelogin.";
 const kSTRING_BUNDLE = "chrome://securelogin/locale/securelogin.properties";
 
+const kOBSERVER_TOPIC = "Securelogin";
+
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 var SecureloginService = {
+
+	OBSERVER_TOPIC: kOBSERVER_TOPIC,
 
 	get prefs () {
 		delete this.prefs;
@@ -119,7 +123,7 @@ var SecureloginService = {
 	notifyObservers: function (aWindow, aData, aSubject) {
 		aSubject.chromeWindow = aWindow;
 		let subject = { wrappedJSObject: aSubject };
-		Services.obs.notifyObservers(subject, "Securelogin", aData);
+		Services.obs.notifyObservers(subject, kOBSERVER_TOPIC, aData);
 	},
 
 	initialize: function () {

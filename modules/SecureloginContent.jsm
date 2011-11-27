@@ -68,11 +68,11 @@ SecureloginContent.prototype = {
 
 	initialize: function (aGlobal) {
 		this.global = aGlobal;
-		Services.obs.addObserver(this, "Securelogin", true);
+		Services.obs.addObserver(this, SecureloginService.OBSERVER_TOPIC, true);
 	},
 
 	destroy: function () {
-		Services.obs.removeObserver(this, "Securelogin");
+		Services.obs.removeObserver(this, SecureloginService.OBSERVER_TOPIC);
 		this.global = null;
 	},
 
@@ -476,7 +476,7 @@ SecureloginContent.prototype = {
 
 	/* nsIObserver */
 	observe: function (aSubject, aTopic, aData) {
-		if (aTopic == "Securelogin") {
+		if (aTopic == SecureloginService.OBSERVER_TOPIC) {
 			let message = aSubject.wrappedJSObject;
 			let chromeWindow = message.chromeWindow;
 			switch (aData) {
