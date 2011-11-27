@@ -68,11 +68,11 @@ SecureloginChrome.prototype = {
 		this.window = aChromeWindow;
 
 		aChromeWindow.addEventListener("load", this, false);
-		Services.obs.addObserver(this, SecureloginService.OBSERVER_TOPIC, true);
+		SecureloginService.addObserver(this);
 	},
 
 	destroy: function () {
-		Services.obs.removeObserver(this, SecureloginService.OBSERVER_TOPIC);
+		SecureloginService.removeObserver(this);
 		this.window = null;
 	},
 

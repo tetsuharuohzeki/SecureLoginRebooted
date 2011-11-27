@@ -116,6 +116,20 @@ var SecureloginService = {
 	},
 
 	/*
+	 * @param {nsIObserver} anObserver
+	 */
+	addObserver: function (anObserver) {
+		Services.obs.addObserver(anObserver, kOBSERVER_TOPIC, true);
+	},
+
+	/*
+	 * @param {nsIObserver} anObserver
+	 */
+	removeObserver: function (anObserver) {
+		Services.obs.removeObserver(anObserver, kOBSERVER_TOPIC);
+	},
+
+	/*
 	 * @param {Window} aData
 	 * @param {string} aData
 	 * @param {object} aSubject
