@@ -110,7 +110,7 @@ SecureloginContent.prototype = {
 	},
 
 	/*
-	 * @param   {string} aLoginInfo
+	 * @param   {string}         aURL
 	 * @returns {nsIPropertyBag}
 	 */
 	_createMatchdata: function (aURL) {
