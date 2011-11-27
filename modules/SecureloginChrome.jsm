@@ -49,8 +49,7 @@ function SecureloginChrome (aChromeWindow) {
 }
 SecureloginChrome.prototype = {
 
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIWebProgressListener,
-	                                       Ci.nsIObserver,
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver,
 	                                       Ci.nsIDOMEventListener,
 	                                       Ci.nsISupportsWeakReference,
 	                                       Ci.nsISupports]),
@@ -206,26 +205,10 @@ SecureloginChrome.prototype = {
 		this.updateOnProgress(aBrowser, aWebProgress);
 	},
 
-	onProgressChange: function (aBrowser, aWebProgress, aRequest, aCurSelfProgress,
-	                            aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress) {
-	},
-
-	onSecurityChange: function (aBrowser, aWebProgress, aRequest, aState) {
-	},
-
 	onStateChange: function (aBrowser, aWebProgress, aRequest, aStateFlags, aStatus) {
 		if (aStateFlags & Ci.nsIWebProgressListener.STATE_STOP) {
 			this.updateOnProgress(aBrowser, aWebProgress);
 		}
-	},
-
-	onStatusChange: function (aBrowser, aWebProgress, aRequest, aStatus, aMessage) {
-	},
-
-	onRefreshAttempted: function (aBrowser, aWebProgress, aRefreshURI, aMillis, aSameURI) {
-	},
-
-	onLinkIconAvailable: function (aBrowser) {
 	},
 
 };
