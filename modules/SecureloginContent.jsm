@@ -431,17 +431,38 @@ SecureloginContent.prototype = {
 	_loginWithNormal: function (aLoginInfo) {
 		let form     = aLoginInfo.form;
 		let elements = form.elements;
-		let submitButton = null;
+
 		for (let i = 0, l = elements.length; i < l; i++) {
 			let element = elements[i];
 			switch (element.type) {
 				case "password":
+					if (element.name == aLoginInfo.passwordField) {
+						element.value = aLoginInfo.password;
+					}
 					break;
 				case "submit":
+					/*
+					 * The current interface of nsILoginInfo does not have an identifier 
+					 * for submit button.
+					 * This part is disable so it can't be helped.
+					 * If it needs to set submit button's value,
+					 * this part might be implemented to regard first submit button in the form
+					 * as the "login" button.
+					 */
+					break;
+				default:
+					if (element.name == aLoginInfo.usernameField) {
+						element.value = aLoginInfo.username;
+					}
 					break;
 			}
 		}
-		
+		try {
+			form.submit();
+		}
+		catch (e) {
+			Cu.reportError(e);
+		}
 	},
 
 	/* EventListner */
