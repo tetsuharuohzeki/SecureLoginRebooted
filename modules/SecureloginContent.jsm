@@ -44,7 +44,7 @@ Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://securelogin/SecureloginService.jsm");
 
-const LOGIN_FORM_HIGHLIGHT_COLOR = "#ffd700";
+const kLOGIN_FORM_HIGHLIGHT_COLOR = "#ffd700";
 
 function SecureloginContent (aGlobal) {
 	this.initialize(aGlobal);
@@ -207,7 +207,7 @@ SecureloginContent.prototype = {
 	 */
 	highlightElement: function (aElement) {
 		let style = aElement.style;
-		style.backgroundColor = LOGIN_FORM_HIGHLIGHT_COLOR;
+		style.backgroundColor = kLOGIN_FORM_HIGHLIGHT_COLOR;
 	},
 
 	/*
