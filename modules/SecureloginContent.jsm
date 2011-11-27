@@ -80,8 +80,7 @@ SecureloginContent.prototype = {
 	 * @param {Window}     aContentWindow
 	 */
 	searchLogin: function (aBrowser, aContentWindow) {
-		let window   = aContentWindow;
-		let document = window.document;
+		let document = aContentWindow.document;
 		let forms    = document.forms;
 		if (forms && forms.length > 0) {
 
