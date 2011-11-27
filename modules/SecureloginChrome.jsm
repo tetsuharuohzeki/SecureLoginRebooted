@@ -84,9 +84,11 @@ SecureloginChrome.prototype = {
 
 	showNotification: function (aBrowser) {
 		let that = this;
+		let GetStringFromName = SecureloginService.stringBundle.GetStringFromName;
+
 		let mainAction = {
-			label    : "Secure Login",
-			accessKey: " ",
+			label    : GetStringFromName("doorhanger.login.label"),
+			accessKey: GetStringFromName("doorhanger.login.accesskey"),
 			callback : function () {
 				that.login();
 			},
@@ -95,7 +97,7 @@ SecureloginChrome.prototype = {
 		this.window.PopupNotifications.show(
 			aBrowser,
 			"securelogin-loginFound",
-			"",
+			GetStringFromName("doorhanger.description"),
 			"password-notification-icon",
 			mainAction,
 			null,
@@ -134,9 +136,14 @@ SecureloginChrome.prototype = {
 	_selectLoginId: function (aLoginsArray) {
 		let loginId  = null;
 		let selected = {};
+
+		let stringBundle = SecureloginService.stringBundle;
+		let title = stringBundle.GetStringFromName("prompt.selectLoginId.title");
+		let description = stringBundle.GetStringFromName("prompt.selectLoginId.description");
+
 		let result   = Services.prompt.select(this.window,
-		                                      "select login ID",
-		                                      "Please select login ID",
+		                                      title,
+		                                      description,
 		                                      aLoginsArray.length,
 		                                      aLoginsArray,
 		                                      selected);

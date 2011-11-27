@@ -41,7 +41,7 @@ const Ci = Components.interfaces;
 const Cu = Components.utils;
 
 const kPREF_NAME     = "extensions.securelogin.";
-const kSTRING_BUNDLE = "chrome://secureLogin/locale/secureLogin.properties";
+const kSTRING_BUNDLE = "chrome://securelogin/locale/securelogin.properties";
 
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
