@@ -432,41 +432,70 @@ SecureloginContent.prototype = {
 	 * @param {SecureLoginInfo} aLoginInfo
 	 */
 	_loginWithNormal: function (aLoginInfo) {
-		let form     = aLoginInfo.form;
-		let elements = form.elements;
+		let form = aLoginInfo.form;
 
-		for (let i = 0, l = elements.length; i < l; i++) {
-			let element = elements[i];
-			switch (element.type) {
-				case "password":
-					if (element.name == aLoginInfo.passwordField) {
-						element.value = aLoginInfo.password;
-					}
-					break;
-				case "submit":
-					/*
-					 * The current interface of nsILoginInfo does not have an identifier 
-					 * for submit button.
-					 * This part is disable so it can't be helped.
-					 * If it needs to set submit button's value,
-					 * this part might be implemented to regard first submit button in the form
-					 * as the "login" button.
-					 */
-					break;
-				default:
-					if (element.name == aLoginInfo.usernameField) {
-						element.value = aLoginInfo.username;
-					}
-					break;
+		let formIsValid  = this._checkFormIsValid(aLoginInfo, form);
+		if (formIsValid) {
+			let elements = form.elements;
+
+			for (let i = 0, l = elements.length; i < l; i++) {
+				let element = elements[i];
+				switch (element.type) {
+					case "password":
+						if (element.name == aLoginInfo.passwordField) {
+							element.value = aLoginInfo.password;
+						}
+						break;
+					case "submit":
+						/*
+						 * The current interface of nsILoginInfo does not have an identifier 
+						 * for submit button.
+						 * This part is disable so it can't be helped.
+						 * If it needs to set submit button's value,
+						 * this part might be implemented to regard first submit button in the form
+						 * as the "login" button.
+						 */
+						break;
+					default:
+						if (element.name == aLoginInfo.usernameField) {
+							element.value = aLoginInfo.username;
+						}
+						break;
+				}
+			}
+			try {
+				form.submit();
+			}
+			catch (e) {
+				Cu.reportError(e);
 			}
 		}
-		try {
-			form.submit();
-		}
-		catch (e) {
-			Cu.reportError(e);
+		else {
+			let message = SecureloginService.stringBundle
+			              .GetStringFromName("alert.formIsChengedFromBefore.description");
+			this.global.alert(message);
 		}
 	},
+
+	/*
+	 * @param {SecureLoginInfo} aLoginInfo
+	 * @param {HTMLFormElement} aForm
+	 */
+	_checkFormIsValid: function (aLoginInfo, aForm) {
+		let isValid = false;
+
+		let formAction = SecureloginService.createNsIURI(aForm.action, null, aForm.baseURI);
+		// Check same action location as before.
+		if (aLoginInfo.formActionURI.equalsExceptRef(formAction)) {
+			// Check same http method as before.
+			if (aForm.method.toLowerCase() === aLoginInfo.formMethod.toLowerCase()) {
+				isValid = true;
+			}
+		}
+
+		return isValid;
+	},
+
 
 	/* EventListner */
 	handleEvent: function (aEvent) {
