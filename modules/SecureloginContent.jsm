@@ -472,7 +472,7 @@ SecureloginContent.prototype = {
 		}
 		else {
 			let message = SecureloginService.stringBundle
-			              .GetStringFromName("alert.formIsChengedFromBefore.description");
+			              .GetStringFromName("prompt.formIsChengedFromBefore.description");
 			this.global.alert(message);
 		}
 	},
