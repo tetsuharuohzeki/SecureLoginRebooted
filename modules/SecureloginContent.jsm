@@ -139,7 +139,7 @@ SecureloginContent.prototype = {
 			let isSameURL = (aLoginInfo.formSubmitURL == formActionURI.prePath);
 
 			if (isSameURL) {
-				info = this.findLoginElements(aLoginInfo, formActionURI.spec, form);
+				info = this.findLoginElements(aLoginInfo, formActionURI, form);
 				if (info != null) {
 					break;
 				}
@@ -153,7 +153,7 @@ SecureloginContent.prototype = {
 
 	/*
 	 * @param   {nsILoginInfo}    aLoginInfo
-	 * @param   {string}          aFormActionURI
+	 * @param   {nsIURI}          aFormActionURI
 	 * @param   {HTMLFormElement} aForm
 	 * @returns {SecureLoginInfo}
 	 */
@@ -276,7 +276,7 @@ SecureloginContent.prototype = {
 
 		this._sendLoginDataWithProtection(aBrowser,
 		                                  aLoginInfo.formMethod,
-		                                  aLoginInfo.formActionURI,
+		                                  aLoginInfo.formAction,
 		                                  dataString,
 		                                  referrer);
 	},
@@ -498,7 +498,7 @@ SecureloginContent.prototype = {
 
 /*
  * @param {nsILoginInfo}    aLoginInfo
- * @param {string}          aFormActionURI
+ * @param {nsIURI}          aFormActionURI
  * @param {HTMLFormElement} aForm
  */
 function SecureLoginInfo (aLoginInfo, aFormActionURI, aForm) {
@@ -509,9 +509,18 @@ function SecureLoginInfo (aLoginInfo, aFormActionURI, aForm) {
 }
 SecureLoginInfo.prototype = {
 	nsILoginInfo : null, // nsILoginInfo
-	formActionURI: null, // string
+	formActionURI: null, // nsIURI
 	formMethod   : null, // string
 	form         : null, // HTMLFormElement
+
+	/*
+	 * The action URI for the form.
+	 *
+	 * @returns {string}
+	 */
+	get formAction () {
+		return this.formActionURI.spec;
+	},
 
 	get username () {
 		return this.nsILoginInfo.username;
