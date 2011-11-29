@@ -156,9 +156,8 @@ SecureloginChrome.prototype = {
 		return loginId;
 	},
 
-	updateOnProgress: function (aBrowser, aWebProgress) {
-		let window = aWebProgress.DOMWindow;
-		this.notifyObservers("searchLogin", { contentWindow: window,
+	updateOnProgress: function (aBrowser, aContentWindow) {
+		this.notifyObservers("searchLogin", { contentWindow: aContentWindow,
 		                                     browser      : aBrowser });
 	},
 
@@ -189,6 +188,9 @@ SecureloginChrome.prototype = {
 			case "unload":
 				this.onUnload(aEvent);
 				break;
+			case "DOMContentLoaded":
+				this.onDOMLoaded(aEvent);
+				break;
 		}
 	},
 
@@ -210,14 +212,26 @@ SecureloginChrome.prototype = {
 		this.destroy();
 	},
 
+	onDOMLoaded: function (aEvent) {
+		let browser = aEvent.currentTarget;
+		browser.removeEventListener("DOMContentLoaded", this, true);
+		this.updateOnProgress(browser, browser.contentWindow);
+	},
+
 	/* ProgressListener */
 	onLocationChange: function (aBrowser, aWebProgress, aRequest, aLocation) {
-		this.updateOnProgress(aBrowser, aWebProgress);
+		this.updateOnProgress(aBrowser, aWebProgress.DOMWindow);
 	},
 
 	onStateChange: function (aBrowser, aWebProgress, aRequest, aStateFlags, aStatus) {
-		if (aStateFlags & Ci.nsIWebProgressListener.STATE_STOP) {
-			this.updateOnProgress(aBrowser, aWebProgress);
+		if (!(aStateFlags & Ci.nsIWebProgressListener.STATE_STOP)) {
+			// Fastback (e.g. restore the tab) doesn't fire DOMContentLoaded.
+			if (aStateFlags & Ci.nsIWebProgressListener.STATE_RESTORING) {
+				this.updateOnProgress(aBrowser, aWebProgress.DOMWindow);
+			}
+			else {
+				aBrowser.addEventListener("DOMContentLoaded", this, true, true);
+			}
 		}
 	},
 
