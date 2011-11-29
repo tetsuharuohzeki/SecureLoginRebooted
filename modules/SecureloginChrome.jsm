@@ -219,8 +219,10 @@ SecureloginChrome.prototype = {
 	},
 
 	/* ProgressListener */
-	onLocationChange: function (aBrowser, aWebProgress, aRequest, aLocation) {
-		this.updateOnProgress(aBrowser, aWebProgress.DOMWindow);
+	onLocationChange: function (aBrowser, aWebProgress, aRequest, aLocation, aFlags) {
+		if (aFlags & Ci.nsIWebProgressListener.LOCATION_CHANGE_SAME_DOCUMENT) {
+			this.updateOnProgress(aBrowser, aWebProgress.DOMWindow);
+		}
 	},
 
 	onStateChange: function (aBrowser, aWebProgress, aRequest, aStateFlags, aStatus) {
