@@ -537,13 +537,37 @@ function SecureLoginInfo (aLoginInfo, aFormActionURI, aForm) {
 	this.formMethod    = aForm.method;
 }
 SecureLoginInfo.prototype = {
-	nsILoginInfo : null, // nsILoginInfo
-	formActionURI: null, // nsIURI
-	formMethod   : null, // string
-	form         : null, // HTMLFormElement
 
 	/*
-	 * The action URI for the form.
+	 * The nsILoginInfo for the login.
+	 *
+	 * @type {nsILoginInfo}
+	 */
+	nsILoginInfo: null,
+
+	/*
+	 * The form action URI as nsIURI for the login.
+	 *
+	 * @type {nsIURI}
+	 */
+	formActionURI: null,
+
+	/*
+	 * The form for the login.
+	 *
+	 * @type {HTMLFormElement}
+	 */
+	form: null,
+
+	/*
+	 * The form method for the login.
+	 *
+	 * @type {string}
+	 */
+	formMethod: null,
+
+	/*
+	 * The form action URI as string for the login.
 	 *
 	 * @returns {string}
 	 */
@@ -551,6 +575,11 @@ SecureLoginInfo.prototype = {
 		return this.formActionURI.spec;
 	},
 
+	/*
+	 * The username for the login.
+	 *
+	 * @returns {string}
+	 */
 	get username () {
 		return this.nsILoginInfo.username;
 	},
@@ -564,6 +593,11 @@ SecureLoginInfo.prototype = {
 		return this.nsILoginInfo.usernameField;
 	},
 
+	/*
+	 * The password for the login.
+	 *
+	 * @returns {string}
+	 */
 	get password () {
 		return this.nsILoginInfo.password;
 	},
