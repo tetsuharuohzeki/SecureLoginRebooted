@@ -450,6 +450,7 @@ SecureloginContent.prototype = {
 				isSetPass = true;
 			}
 
+			searchSubmit:
 			if (isSetPass) {
 				// The current interface of nsILoginInfo does not have an identifier 
 				// for submit button.
@@ -460,6 +461,21 @@ SecureloginContent.prototype = {
 				// ref. <http://www.w3.org/TR/html5/forms.html#the-form-element>
 				let selector = "input[type='submit'], input[type='image'], button";
 				let element = form.querySelector(selector);
+
+				// Check the element is associated with login form.
+				if (element.form && (element.form != form)) {
+					break searchSubmit;
+				}
+
+				// Check whether the element's formaction attribute overwrites the original form action.
+				if (element.formAction) {
+					let formAction = SecureloginService.createNsIURI(element.formAction, null, aForm.baseURI);
+					// The case of the element's formaction attribute overwrites the original action.
+					if (aLoginInfo.formActionURI.equalsExceptRef(formAction)) {
+						break searchSubmit;
+					}
+				}
+
 				submitButton = element;
 			}
 
