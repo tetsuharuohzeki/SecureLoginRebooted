@@ -437,34 +437,39 @@ SecureloginContent.prototype = {
 		let formIsValid  = this._checkFormIsValid(aLoginInfo, form);
 		if (formIsValid) {
 			let elements = form.elements;
+			let user = elements.namedItem(aLoginInfo.usernameField);
+			let pass = elements.namedItem(aLoginInfo.passwordField);
+			let isSetPass = false;
+			let submitButton = null;
 
-			for (let i = 0, l = elements.length; i < l; i++) {
-				let element = elements[i];
-				switch (element.type) {
-					case "password":
-						if (element.name == aLoginInfo.passwordField) {
-							element.value = aLoginInfo.password;
-						}
-						break;
-					case "submit":
-						/*
-						 * The current interface of nsILoginInfo does not have an identifier 
-						 * for submit button.
-						 * This part is disable so it can't be helped.
-						 * If it needs to set submit button's value,
-						 * this part might be implemented to regard first submit button in the form
-						 * as the "login" button.
-						 */
-						break;
-					default:
-						if (element.name == aLoginInfo.usernameField) {
-							element.value = aLoginInfo.username;
-						}
-						break;
-				}
+			if (user) {
+				user.value = aLoginInfo.username;
 			}
+			if (pass) {
+				pass.value = aLoginInfo.password;
+				isSetPass = true;
+			}
+
+			if (isSetPass) {
+				// The current interface of nsILoginInfo does not have an identifier 
+				// for submit button.
+				// So this part is implemented to regard first submit button 
+				// in the form as the "login" button.
+				// The element whose |type| attribute is in the Image Button state
+				// is not contained in |HTMLFormElement.elements|.
+				// ref. <http://www.w3.org/TR/html5/forms.html#the-form-element>
+				let selector = "input[type='submit'], input[type='image'], button";
+				let element = form.querySelector(selector);
+				submitButton = element;
+			}
+
 			try {
-				form.submit();
+				if (submitButton) {
+					submitButton.click();
+				}
+				else {
+					form.submit();
+				}
 			}
 			catch (e) {
 				Cu.reportError(e);
