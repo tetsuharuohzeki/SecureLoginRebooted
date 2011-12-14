@@ -58,13 +58,16 @@ SecureloginChrome.prototype = {
 	                                       Ci.nsISupports]),
 
 	window             : null,
-	_secureLoginInfoMap: null,
 
 	get secureLoginInfoMap () {
-		if (!this._secureLoginInfoMap) {
-			this._secureLoginInfoMap = new WeakMap();
-		}
-		return this._secureLoginInfoMap;
+		let map = new WeakMap();
+		Object.defineProperty(this, "secureLoginInfoMap", {
+			value       : map,
+			writable    : true,
+			configurable: true,
+			enumerable  : true,
+		});
+		return map;
 	},
 
 	initialize: function (aChromeWindow) {
