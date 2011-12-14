@@ -45,6 +45,7 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://securelogin/SecureloginService.jsm");
 
 const kLOGIN_FORM_HIGHLIGHT_COLOR = "#ffd700";
+const kLOGIN_FORM_ID_ATTRIBUTE    = "data-securelogin-form-id";
 
 function SecureloginContent (aGlobal) {
 	this.initialize(aGlobal);
@@ -161,7 +162,14 @@ SecureloginContent.prototype = {
 		let loginInfo = null;
 		let [user, pass] = this._getLoginElements(aLoginInfo, aForm);
 		if (pass) {
-			loginInfo = new SecureLoginInfo(aLoginInfo, aFormActionURI, aForm);
+			// Set identifier
+			let formId = aForm.getAttribute(kLOGIN_FORM_ID_ATTRIBUTE);
+			let id     = formId ? formId : ( Date.now() + "" );
+			if (formId === null) {
+				aForm.setAttribute(kLOGIN_FORM_ID_ATTRIBUTE, id);
+			}
+
+			loginInfo = new SecureLoginInfo(aLoginInfo, aFormActionURI, aForm, id);
 			this.highlightForm(user, pass);
 		}
 		return loginInfo;
@@ -250,7 +258,7 @@ SecureloginContent.prototype = {
 			this._loginWithProtection(aBrowser, info);
 		}
 		else {
-			this._loginWithNormal(info);
+			this._loginWithNormal(aBrowser, info);
 		}
 	},
 
@@ -271,8 +279,9 @@ SecureloginContent.prototype = {
 	 * @param {SecureLoginInfo} aLoginInfo
 	 */
 	_loginWithProtection: function (aBrowser, aLoginInfo) {
-		let dataString = this._createDataString(aLoginInfo);
-		let referrer = SecureloginService.createNsIURI(aLoginInfo.form.baseURI);
+		let form = aLoginInfo.getForm(aBrowser.contentDocument);
+		let dataString = this._createDataString(aLoginInfo, form);
+		let referrer = SecureloginService.createNsIURI(form.baseURI);
 
 		this._sendLoginDataWithProtection(aBrowser,
 		                                  aLoginInfo.formMethod,
@@ -283,13 +292,13 @@ SecureloginContent.prototype = {
 
 	/*
 	 * @param   {SecureLoginInfo} aLoginInfo
+	 * @param   {HTMLFormElement} aForm
 	 * @returns {string}
 	 */
-	_createDataString: function (aLoginInfo) {
+	_createDataString: function (aLoginInfo, aForm) {
 		let param    = [];
-		let form     = aLoginInfo.form;
-		let elements = form.elements;
-		let charset  = form.ownerDocument.characterSet;
+		let elements = aForm.elements;
+		let charset  = aForm.ownerDocument.characterSet;
 
 		let setDataString = function setDataString (aKey, aValue) {
 			let data = SecureloginService.encodeString(aKey, charset) +
@@ -432,8 +441,8 @@ SecureloginContent.prototype = {
 	/*
 	 * @param {SecureLoginInfo} aLoginInfo
 	 */
-	_loginWithNormal: function (aLoginInfo) {
-		let form = aLoginInfo.form;
+	_loginWithNormal: function (aBrowser, aLoginInfo) {
+		let form = aLoginInfo.getForm(aBrowser.contentDocument);
 
 		let formIsValid  = this._checkFormIsValid(aLoginInfo, form);
 		if (formIsValid) {
@@ -551,12 +560,13 @@ SecureloginContent.prototype = {
  * @param {nsILoginInfo}    aLoginInfo
  * @param {nsIURI}          aFormActionURI
  * @param {HTMLFormElement} aForm
+ * @param {string}          aFormId
  */
-function SecureLoginInfo (aLoginInfo, aFormActionURI, aForm) {
+function SecureLoginInfo (aLoginInfo, aFormActionURI, aForm, aFormId) {
 	this.nsILoginInfo  = aLoginInfo;
 	this.formActionURI = aFormActionURI;
-	this.form          = aForm;
 	this.formMethod    = aForm.method;
+	this.formId        = aFormId;
 }
 SecureLoginInfo.prototype = {
 
@@ -568,18 +578,18 @@ SecureLoginInfo.prototype = {
 	nsILoginInfo: null,
 
 	/*
+	 * The kLOGIN_FORM_ID_ATTRIBUTE attribute of the login form.
+	 *
+	 * @type {string}
+	 */
+	formId: null,
+
+	/*
 	 * The form action URI as nsIURI for the login.
 	 *
 	 * @type {nsIURI}
 	 */
 	formActionURI: null,
-
-	/*
-	 * The form for the login.
-	 *
-	 * @type {HTMLFormElement}
-	 */
-	form: null,
 
 	/*
 	 * The form method for the login.
@@ -631,6 +641,17 @@ SecureLoginInfo.prototype = {
 	 */
 	get passwordField () {
 		return this.nsILoginInfo.passwordField;
+	},
+
+	/*
+	 * Return the form for the login.
+	 *
+	 * @param  {Document}        aDoc
+	 * @return {HTMLFormElement}
+	 */
+	getForm: function (aDoc) {
+		let selector = "form[" + kLOGIN_FORM_ID_ATTRIBUTE + "='" + this.formId + "']";
+		return aDoc.querySelector(selector);
 	},
 
 };
