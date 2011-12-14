@@ -470,7 +470,7 @@ SecureloginContent.prototype = {
 
 				// Check whether the element's formaction attribute overwrites the original form action.
 				if (element.formAction) {
-					let formAction = SecureloginService.createNsIURI(element.formAction, null, aForm.baseURI);
+					let formAction = SecureloginService.createNsIURI(element.formAction, null, form.baseURI);
 					// The case of the element's formaction attribute overwrites the original action.
 					if (aLoginInfo.formActionURI.equalsExceptRef(formAction)) {
 						break searchSubmit;
