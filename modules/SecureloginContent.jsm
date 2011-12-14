@@ -243,7 +243,7 @@ SecureloginContent.prototype = {
 	login: function (aBrowser, aLoginDataId) {
 		let info = this.getSecureLoginInfo(aBrowser, aLoginDataId);
 		if (!info) {
-			return Cu.reportError("");
+			return Cu.reportError("No SecureLoginInfo. Please reload this page.");
 		}
 
 		if (SecureloginService.useProtection()) {
