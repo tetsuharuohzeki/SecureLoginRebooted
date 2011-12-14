@@ -287,8 +287,9 @@ SecureloginContent.prototype = {
 	 */
 	_createDataString: function (aLoginInfo) {
 		let param    = [];
-		let elements = aLoginInfo.form.elements;
-		let charset  = aLoginInfo.charset;
+		let form     = aLoginInfo.form;
+		let elements = form.elements;
+		let charset  = form.ownerDocument.characterSet;
 
 		let setDataString = function setDataString (aKey, aValue) {
 			let data = SecureloginService.encodeString(aKey, charset) +
@@ -630,15 +631,6 @@ SecureLoginInfo.prototype = {
 	 */
 	get passwordField () {
 		return this.nsILoginInfo.passwordField;
-	},
-
-	/*
-	 * The character encoding of the document which has the form.
-	 *
-	 * @returns {string}
-	 */
-	get charset () {
-		return this.form.ownerDocument.characterSet;
 	},
 
 };
