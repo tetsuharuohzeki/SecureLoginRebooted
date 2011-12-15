@@ -449,60 +449,7 @@ SecureloginContent.prototype = {
 
 		let formIsValid  = this._checkFormIsValid(aLoginInfo, form);
 		if (formIsValid) {
-			let elements = form.elements;
-			let user = elements.namedItem(aLoginInfo.usernameField);
-			let pass = elements.namedItem(aLoginInfo.passwordField);
-			let isSetPass = false;
-			let submitButton = null;
-
-			if (user) {
-				user.value = aLoginInfo.username;
-			}
-			if (pass) {
-				pass.value = aLoginInfo.password;
-				isSetPass = true;
-			}
-
-			searchSubmit:
-			if (isSetPass) {
-				// The current interface of nsILoginInfo does not have an identifier 
-				// for submit button.
-				// So this part is implemented to regard first submit button 
-				// in the form as the "login" button.
-				// The element whose |type| attribute is in the Image Button state
-				// is not contained in |HTMLFormElement.elements|.
-				// ref. <http://www.w3.org/TR/html5/forms.html#the-form-element>
-				let selector = "input[type='submit'], input[type='image'], button";
-				let element = form.querySelector(selector);
-
-				// Check the element is associated with login form.
-				if (element.form && (element.form != form)) {
-					break searchSubmit;
-				}
-
-				// Check whether the element's formaction attribute overwrites the original form action.
-				if (element.formAction) {
-					let formAction = SecureloginService.createNsIURI(element.formAction, null, form.baseURI);
-					// The case of the element's formaction attribute overwrites the original action.
-					if (aLoginInfo.formActionURI.equalsExceptRef(formAction)) {
-						break searchSubmit;
-					}
-				}
-
-				submitButton = element;
-			}
-
-			try {
-				if (submitButton) {
-					submitButton.click();
-				}
-				else {
-					form.submit();
-				}
-			}
-			catch (e) {
-				Cu.reportError(e);
-			}
+			this._sendLoginData(aLoginInfo, form);
 		}
 		else {
 			let message = SecureloginService.stringBundle
@@ -530,6 +477,66 @@ SecureloginContent.prototype = {
 		return isValid;
 	},
 
+	/*
+	 * @param {SecureLoginInfo} aLoginInfo
+	 * @param {HTMLFormElement} aForm
+	 */
+	_sendLoginData: function (aLoginInfo, aForm) {
+		let elements     = aForm.elements;
+		let user         = elements.namedItem(aLoginInfo.usernameField);
+		let pass         = elements.namedItem(aLoginInfo.passwordField);
+		let isSetPass    = false;
+		let submitButton = null;
+
+		if (user) {
+			user.value = aLoginInfo.username;
+		}
+		if (pass) {
+			pass.value = aLoginInfo.password;
+			isSetPass = true;
+		}
+
+		searchSubmit:
+		if (isSetPass) {
+			// The current interface of nsILoginInfo does not have an identifier 
+			// for submit button.
+			// So this part is implemented to regard first submit button 
+			// in the form as the "login" button.
+			// The element whose |type| attribute is in the Image Button state
+			// is not contained in |HTMLFormElement.elements|.
+			// ref. <http://www.w3.org/TR/html5/forms.html#the-form-element>
+			let selector = "input[type='submit'], input[type='image'], button";
+			let element  = aForm.querySelector(selector);
+
+			// Check the element is associated with login form.
+			if (element.form && (element.form != aForm)) {
+				break searchSubmit;
+			}
+
+			// Check whether the element's formaction attribute overwrites the original form action.
+			if (element.formAction) {
+				let formAction = SecureloginService.createNsIURI(element.formAction, null, aForm.baseURI);
+				// The case of the element's formaction attribute overwrites the original action.
+				if (aLoginInfo.formActionURI.equalsExceptRef(formAction)) {
+					break searchSubmit;
+				}
+			}
+
+			submitButton = element;
+		}
+
+		try {
+			if (submitButton) {
+				submitButton.click();
+			}
+			else {
+				aForm.submit();
+			}
+		}
+		catch (e) {
+			Cu.reportError(e);
+		}
+	},
 
 	/* EventListner */
 	handleEvent: function (aEvent) {
