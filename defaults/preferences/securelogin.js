@@ -38,6 +38,10 @@
 // Use protected login
 pref("extensions.securelogin.loginWithProtection", true);
 
+// Override the login form action & method if the login form's action or method
+// are overwritten by someone, when using normal login.
+pref("extensions.securelogin.overrideFormAction", true);
+
 // Change Firefox default setting.
 // Set password to form if this pref is true.
 // However this behavior is not secure completely.

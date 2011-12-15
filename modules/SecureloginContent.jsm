@@ -451,6 +451,13 @@ SecureloginContent.prototype = {
 		if (formIsValid) {
 			this._sendLoginData(aLoginInfo, form);
 		}
+		else if (SecureloginService.prefs.getBoolPref("overrideFormAction")) {
+			// override the form action & method
+			form.action = aLoginInfo.formAction;
+			form.method = aLoginInfo.formMethod;
+			// login
+			this._sendLoginData(aLoginInfo, form);
+		}
 		else {
 			let message = SecureloginService.stringBundle
 			              .GetStringFromName("prompt.formIsChengedFromBefore.description");
