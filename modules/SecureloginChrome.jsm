@@ -170,11 +170,11 @@ SecureloginChrome.prototype = {
 
 	/* nsIObserver */
 	observe: function (aSubject, aTopic, aData) {
-		if (aTopic == SecureloginService.OBSERVER_TOPIC) {
+		if (aTopic === SecureloginService.OBSERVER_TOPIC) {
 			let message = aSubject.wrappedJSObject;
 			switch (aData) {
 				case "loginFound":
-					if (this.window == message.chromeWindow) {
+					if (this.window === message.chromeWindow) {
 						this.onLoginFound(message);
 					}
 					break;

@@ -553,17 +553,17 @@ SecureloginContent.prototype = {
 
 	/* nsIObserver */
 	observe: function (aSubject, aTopic, aData) {
-		if (aTopic == SecureloginService.OBSERVER_TOPIC) {
+		if (aTopic === SecureloginService.OBSERVER_TOPIC) {
 			let message = aSubject.wrappedJSObject;
 			let chromeWindow = message.chromeWindow;
 			switch (aData) {
 				case "searchLogin":
-					if (this.global == chromeWindow) {
+					if (this.global === chromeWindow) {
 						this.searchLogin(message.browser, message.contentWindow);
 					}
 					break;
 				case "login":
-					if (this.global == chromeWindow) {
+					if (this.global === chromeWindow) {
 						this.login(message.browser, message.loginId);
 					}
 					break;
