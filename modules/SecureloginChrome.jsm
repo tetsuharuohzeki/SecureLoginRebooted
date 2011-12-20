@@ -223,14 +223,13 @@ SecureloginChrome.prototype = {
 
 	/* ProgressListener */
 	onStateChange: function (aBrowser, aWebProgress, aRequest, aStateFlags, aStatus) {
-		if (!(aStateFlags & Ci.nsIWebProgressListener.STATE_STOP)) {
-			// Fastback (e.g. restore the tab) doesn't fire DOMContentLoaded.
-			if (aStateFlags & Ci.nsIWebProgressListener.STATE_RESTORING) {
-				this.updateOnProgress(aBrowser, aWebProgress.DOMWindow);
-			}
-			else {
-				aBrowser.addEventListener("DOMContentLoaded", this, true, true);
-			}
+		let isSTATE_STOP = (aStateFlags & Ci.nsIWebProgressListener.STATE_STOP);
+		// Fastback (e.g. restore the tab) doesn't fire DOMContentLoaded.
+		if (isSTATE_STOP && (aStateFlags & Ci.nsIWebProgressListener.STATE_RESTORING)) {
+			this.updateOnProgress(aBrowser, aWebProgress.DOMWindow);
+		}
+		else {
+			aBrowser.addEventListener("DOMContentLoaded", this, true, true);
 		}
 	},
 
