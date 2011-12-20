@@ -225,11 +225,15 @@ SecureloginChrome.prototype = {
 	onStateChange: function (aBrowser, aWebProgress, aRequest, aStateFlags, aStatus) {
 		let isSTATE_STOP = (aStateFlags & Ci.nsIWebProgressListener.STATE_STOP);
 		// Fastback (e.g. restore the tab) doesn't fire DOMContentLoaded.
-		if (isSTATE_STOP && (aStateFlags & Ci.nsIWebProgressListener.STATE_RESTORING)) {
-			this.updateOnProgress(aBrowser, aWebProgress.DOMWindow);
+		if ((aStateFlags & Ci.nsIWebProgressListener.STATE_RESTORING)) {
+			if (isSTATE_STOP) {
+				this.updateOnProgress(aBrowser, aWebProgress.DOMWindow);
+			}
 		}
 		else {
-			aBrowser.addEventListener("DOMContentLoaded", this, true, true);
+			if (!isSTATE_STOP) {
+				aBrowser.addEventListener("DOMContentLoaded", this, true, true);
+			}
 		}
 	},
 
