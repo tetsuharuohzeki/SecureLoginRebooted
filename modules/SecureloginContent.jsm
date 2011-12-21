@@ -57,7 +57,7 @@ SecureloginContent.prototype = {
 	                                       Ci.nsISupportsWeakReference,
 	                                       Ci.nsISupports]),
 
-	global             : null,
+	global: null,
 
 	get secureLoginInfoMap () {
 		let map = new WeakMap();

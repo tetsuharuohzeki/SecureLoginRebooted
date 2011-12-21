@@ -57,7 +57,7 @@ SecureloginChrome.prototype = {
 	                                       Ci.nsISupportsWeakReference,
 	                                       Ci.nsISupports]),
 
-	window             : null,
+	window: null,
 
 	get secureLoginInfoMap () {
 		let map = new WeakMap();
