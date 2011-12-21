@@ -73,13 +73,13 @@ var SecureloginService = {
 	 */
 	createNsIURI: function (aURIStr, aOriginCharset, aBaseURI) {
 		let URI;
-		let newURI = Services.io.newURI;
+		let io = Services.io;
 		try {
-			URI = newURI(aURIStr, aOriginCharset, null);
+			URI = io.newURI(aURIStr, aOriginCharset, null);
 		}
 		catch (e) {
-			let resolvedURIStr = newURI(aBaseURI, aOriginCharset, null).resolve(aURIStr);
-			URI                = newURI(resolvedURIStr, aOriginCharset, null);
+			let resolvedStr = io.newURI(aBaseURI, aOriginCharset, null).resolve(aURIStr);
+			URI             = io.newURI(resolvedStr, aOriginCharset, null);
 		}
 		return URI;
 	},
