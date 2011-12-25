@@ -126,7 +126,7 @@ SecureloginChrome.prototype = {
 	},
 
 	getLoginId: function (aBrowser) {
-		let loginId = null;
+		let loginId = "";
 		let logins = this.secureLoginInfoMap.get(aBrowser);
 		if (logins) {
 			if (logins.length > 1) {
