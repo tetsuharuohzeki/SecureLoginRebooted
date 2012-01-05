@@ -371,8 +371,8 @@ SecureloginContent.prototype = {
 						setDataString("y", "1");
 					}
 					else {
-						setDataString(element.name + "x", "1");
-						setDataString(element.name + "y", "1");
+						setDataString(element.name + ".x", "1");
+						setDataString(element.name + ".y", "1");
 					}
 				default:
 					if (element.name == aLoginInfo.usernameField) {
