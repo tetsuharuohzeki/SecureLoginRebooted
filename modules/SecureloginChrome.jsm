@@ -64,7 +64,7 @@ SecureloginChrome.prototype = {
 			label    : GetStringFromName("doorhanger.login.label"),
 			accessKey: GetStringFromName("doorhanger.login.accesskey"),
 			callback : function () {
-				that.login();
+				that.loginSelectedBrowser();
 			},
 		};
 
@@ -86,11 +86,15 @@ SecureloginChrome.prototype = {
 		);
 	},
 
-	login: function () {
+	loginSelectedBrowser: function () {
 		let browser = this.window.gBrowser.selectedBrowser;
-		let loginId = this.getLoginId(browser);
-		this.notifyObservers("login", { browser: browser, 
-		                               loginId: loginId });
+		this.login(browser);
+	},
+
+	login: function (aBrowser) {
+		let loginId = this.getLoginId(aBrowser);
+		this.notifyObservers("login", { browser: aBrowser, 
+		                                loginId: loginId });
 	},
 
 	getLoginId: function (aBrowser) {
