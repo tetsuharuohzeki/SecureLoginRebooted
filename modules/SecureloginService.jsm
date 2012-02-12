@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-var EXPORTED_SYMBOLS = ["SecureloginService"];
+let EXPORTED_SYMBOLS = ["SecureloginService"];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -16,7 +16,7 @@ const kOBSERVER_TOPIC = "Securelogin";
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
-var SecureloginService = {
+let SecureloginService = {
 
 	OBSERVER_TOPIC: kOBSERVER_TOPIC,
 

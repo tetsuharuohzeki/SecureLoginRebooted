@@ -3,4 +3,4 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 Components.utils.import("resource://securelogin/SecureloginContent.jsm");
-var SecureloginContent = new SecureloginContent(window);
+let SecureloginContent = new SecureloginContent(window);

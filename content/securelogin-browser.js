@@ -3,4 +3,4 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 Components.utils.import("resource://securelogin/SecureloginChrome.jsm");
-var SecureloginBrowser = new SecureloginChrome(window);
+let SecureloginBrowser = new SecureloginChrome(window);
