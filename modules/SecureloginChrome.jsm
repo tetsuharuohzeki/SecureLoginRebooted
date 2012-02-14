@@ -13,7 +13,7 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://securelogin/SecureloginService.jsm");
 
 const kDOORHANGER_NOTIFICATION_ID = "securelogin-loginFound";
-const kDOORHANGER_ANCHOR_ID       = "password-notification-icon";
+const kDOORHANGER_ANCHOR_ID       = "securelogin-notification-icon";
 
 function SecureloginChrome (aChromeWindow) {
 	this.initialize(aChromeWindow);

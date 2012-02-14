@@ -15,4 +15,10 @@
 	<script type="application/javascript"
 	        src="chrome://securelogin/content/securelogin-content.js"></script>
 
+	<box id="notification-popup-box">
+		<image id="securelogin-notification-icon"
+		       class="notification-anchor-icon"
+		       role="button"/>
+	</box>
+
 </overlay>
