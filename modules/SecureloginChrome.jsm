@@ -52,7 +52,10 @@ SecureloginChrome.prototype = {
 
 	onLoginFound: function (aMessage) {
 		let browser = aMessage.browser;
-		this.secureLoginInfoMap.set(browser, aMessage.logins);
+		this.secureLoginInfoMap.set(browser, {
+			logins  : aMessage.logins,
+			location: browser.currentURI,
+		});
 		this.showNotification(browser);
 	},
 
@@ -88,18 +91,23 @@ SecureloginChrome.prototype = {
 
 	loginSelectedBrowser: function () {
 		let browser = this.window.gBrowser.selectedBrowser;
-		this.login(browser);
+		if (this.secureLoginInfoMap.has(browser)) {
+			this.login(browser);
+		}
 	},
 
 	login: function (aBrowser) {
-		let loginId = this.getLoginId(aBrowser);
-		this.notifyObservers("login", { browser: aBrowser, 
-		                                loginId: loginId });
+		let loginURI = this.secureLoginInfoMap.get(aBrowser).location;
+		if (loginURI.equals(aBrowser.currentURI)) { 
+			let loginId = this.getLoginId(aBrowser);
+			this.notifyObservers("login", { browser: aBrowser, 
+											loginId: loginId });
+		}
 	},
 
 	getLoginId: function (aBrowser) {
 		let loginId = "";
-		let logins = this.secureLoginInfoMap.get(aBrowser);
+		let logins = this.secureLoginInfoMap.get(aBrowser).logins;
 		if (logins) {
 			if (logins.length > 1) {
 				loginId = this._selectLoginId(logins);
