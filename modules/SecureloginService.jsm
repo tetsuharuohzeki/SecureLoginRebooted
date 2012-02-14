@@ -22,8 +22,7 @@ let SecureloginService = {
 
 	get prefs () {
 		delete this.prefs;
-		return this.prefs = Services.prefs.getBranch(kPREF_NAME)
-		                    .QueryInterface(Ci.nsIPrefBranch2);
+		return this.prefs = Services.prefs.getBranch(kPREF_NAME);
 	},
 
 	get stringBundle () {
