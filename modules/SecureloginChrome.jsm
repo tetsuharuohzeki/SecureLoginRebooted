@@ -91,23 +91,26 @@ SecureloginChrome.prototype = {
 
 	loginSelectedBrowser: function () {
 		let browser = this.window.gBrowser.selectedBrowser;
-		if (this.secureLoginInfoMap.has(browser)) {
-			this.login(browser);
-		}
+		this.login(browser);
 	},
 
 	login: function (aBrowser) {
-		let loginURI = this.secureLoginInfoMap.get(aBrowser).location;
-		if (loginURI.equals(aBrowser.currentURI)) { 
-			let loginId = this.getLoginId(aBrowser);
+		let secureLoginInfoMap = this.secureLoginInfoMap;
+		if (!secureLoginInfoMap.has(aBrowser)) {
+			return;
+		}
+
+		let loginInfo = secureLoginInfoMap.get(aBrowser);
+		if (loginInfo.location.equals(aBrowser.currentURI)) { 
+			let loginId = this.getLoginId(loginInfo);
 			this.notifyObservers("login", { browser: aBrowser, 
-											loginId: loginId });
+			                                loginId: loginId });
 		}
 	},
 
-	getLoginId: function (aBrowser) {
+	getLoginId: function (aLoginInfo) {
 		let loginId = "";
-		let logins = this.secureLoginInfoMap.get(aBrowser).logins;
+		let logins  = aLoginInfo.logins;
 		if (logins) {
 			if (logins.length > 1) {
 				loginId = this._selectLoginId(logins);
