@@ -191,12 +191,12 @@ SecureloginChrome.prototype = {
 		let browser       = aEvent.currentTarget;
 		let contentWindow = browser.contentWindow;
 
-		browser.removeEventListener("DOMContentLoaded", this, true);
-
 		// Call only if a DOMContentLoaded fires from the root document.
 		if (aEvent.target === contentWindow.document) {
 			this.updateOnProgress(browser, contentWindow);
 		}
+
+		browser.removeEventListener("DOMContentLoaded", this, true);
 	},
 
 	/* ProgressListener */
