@@ -174,6 +174,9 @@ SecureloginChrome.prototype = {
 			case "unload":
 				this.onUnload(aEvent);
 				break;
+			case "TabClose":
+				this.onTabClose(aEvent);
+				break;
 			case "DOMContentLoaded":
 				this.onDOMLoaded(aEvent);
 				break;
@@ -184,6 +187,7 @@ SecureloginChrome.prototype = {
 		let window = this.window;
 		window.removeEventListener("load", this);
 
+		window.gBrowser.tabContainer.addEventListener("TabClose", this, false);
 		window.gBrowser.addTabsProgressListener(this);
 
 		window.addEventListener("unload", this, false);
@@ -191,11 +195,26 @@ SecureloginChrome.prototype = {
 
 	onUnload: function (aEvent) {
 		let window = this.window;
+		let gBrowser = window.gBrowser;
 		window.removeEventListener("unload", this);
 
-		window.gBrowser.removeTabsProgressListener(this);
+		gBrowser.removeTabsProgressListener(this);
+		gBrowser.tabContainer.removeEventListener("TabClose", this, false);
+
+		// Remove event listener from xul:browser element,
+		// because TabClose event is not fired when closes browser window.
+		let tabs = gBrowser.tabContainer.childNodes;
+		for (let tab of tabs) {
+			let browser = gBrowser.getBrowserForTab(tab);
+			browser.removeEventListener("DOMContentLoaded", this, true);
+		}
 
 		this.destroy();
+	},
+
+	onTabClose: function (aEvent) {
+		let browser = this.window.gBrowser.getBrowserForTab(aEvent.target);
+		browser.removeEventListener("DOMContentLoaded", this, true);
 	},
 
 	onDOMLoaded: function (aEvent) {
@@ -206,8 +225,6 @@ SecureloginChrome.prototype = {
 		if (aEvent.target === contentWindow.document) {
 			this.updateOnProgress(browser, contentWindow);
 		}
-
-		browser.removeEventListener("DOMContentLoaded", this, true);
 	},
 
 	/* ProgressListener */
