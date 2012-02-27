@@ -174,6 +174,9 @@ SecureloginChrome.prototype = {
 			case "unload":
 				this.onUnload(aEvent);
 				break;
+			case "TabOpen":
+				this.onTabOpen(aEvent);
+				break;
 			case "TabClose":
 				this.onTabClose(aEvent);
 				break;
@@ -185,10 +188,20 @@ SecureloginChrome.prototype = {
 
 	onLoad: function (aEvent) {
 		let window = this.window;
+		let gBrowser = window.gBrowser;
 		window.removeEventListener("load", this);
 
-		window.gBrowser.tabContainer.addEventListener("TabClose", this, false);
-		window.gBrowser.addTabsProgressListener(this);
+		gBrowser.tabContainer.addEventListener("TabOpen", this, false);
+		gBrowser.tabContainer.addEventListener("TabClose", this, false);
+		gBrowser.addTabsProgressListener(this);
+
+		// Add event listener to xul:browser element,
+		// because TabOpen event is not fired when opens browser window.
+		let tabs = gBrowser.tabContainer.childNodes;
+		for (let tab of tabs) {
+			let browser = gBrowser.getBrowserForTab(tab);
+			browser.addEventListener("DOMContentLoaded", this, true, true);
+		}
 
 		window.addEventListener("unload", this, false);
 	},
@@ -200,6 +213,7 @@ SecureloginChrome.prototype = {
 
 		gBrowser.removeTabsProgressListener(this);
 		gBrowser.tabContainer.removeEventListener("TabClose", this, false);
+		gBrowser.tabContainer.removeEventListener("TabOpen", this, false);
 
 		// Remove event listener from xul:browser element,
 		// because TabClose event is not fired when closes browser window.
@@ -210,6 +224,11 @@ SecureloginChrome.prototype = {
 		}
 
 		this.destroy();
+	},
+
+	onTabOpen: function (aEvent) {
+		let browser = this.window.gBrowser.getBrowserForTab(aEvent.target);
+		browser.addEventListener("DOMContentLoaded", this, true, true);
 	},
 
 	onTabClose: function (aEvent) {
@@ -229,16 +248,11 @@ SecureloginChrome.prototype = {
 
 	/* ProgressListener */
 	onStateChange: function (aBrowser, aWebProgress, aRequest, aStateFlags, aStatus) {
-		let isSTATE_STOP = (aStateFlags & Ci.nsIWebProgressListener.STATE_STOP);
 		// Fastback (e.g. restore the tab) doesn't fire DOMContentLoaded.
 		if ((aStateFlags & Ci.nsIWebProgressListener.STATE_RESTORING)) {
+			let isSTATE_STOP = (aStateFlags & Ci.nsIWebProgressListener.STATE_STOP);
 			if (isSTATE_STOP) {
 				this.updateOnProgress(aBrowser, aWebProgress.DOMWindow);
-			}
-		}
-		else {
-			if (!isSTATE_STOP) {
-				aBrowser.addEventListener("DOMContentLoaded", this, true, true);
 			}
 		}
 	},
