@@ -151,7 +151,8 @@ SecureloginChrome.prototype = {
 	},
 
 	switchLoginModeConfig: function () {
-		let uri = this.window.gBrowser.selectedBrowser.currentURI;
+		let browser = this.window.gBrowser.selectedBrowser
+		let uri = browser.currentURI;
 
 		let stringBundle = SecureloginService.stringBundle;
 		let title = stringBundle.GetStringFromName("prompt.switchLoginModeConfig.title");
@@ -159,6 +160,9 @@ SecureloginChrome.prototype = {
 		let useNormal = Services.prompt.confirm(this.window, title, description);
 
 		SecureloginService.setLoginMode(uri, !useNormal);
+
+		// show the notification again.
+		this.showNotification(browser);
 	},
 
 	updateOnProgress: function (aBrowser, aContentWindow) {
