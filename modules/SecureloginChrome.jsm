@@ -113,6 +113,13 @@ SecureloginChrome.prototype = {
 			let loginId = this.getLoginId(loginInfo);
 			this.notifyObservers("login", { browser: aBrowser, 
 			                                loginId: loginId });
+
+			let n = this.window.PopupNotifications.getNotification(
+			                      DOORHANGER_NOTIFICATION_ID,
+			                      aBrowser);
+			if (n) {
+				n.remove();
+			}
 		}
 	},
 
