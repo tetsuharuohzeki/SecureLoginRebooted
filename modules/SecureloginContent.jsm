@@ -12,8 +12,8 @@ Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://securelogin/SecureloginService.jsm");
 
-const kLOGIN_FORM_HIGHLIGHT_COLOR = "#ffd700";
-const kLOGIN_FORM_ID_ATTRIBUTE    = "data-securelogin-form-id";
+const LOGIN_FORM_HIGHLIGHT_COLOR = "#ffd700";
+const LOGIN_FORM_ID_ATTRIBUTE    = "data-securelogin-form-id";
 
 function SecureloginContent (aGlobal) {
 	this.initialize(aGlobal);
@@ -134,10 +134,10 @@ SecureloginContent.prototype = {
 		let [user, pass] = this._getLoginElements(aLoginInfo, aForm);
 		if (pass) {
 			// Set identifier
-			let formId = aForm.getAttribute(kLOGIN_FORM_ID_ATTRIBUTE);
+			let formId = aForm.getAttribute(LOGIN_FORM_ID_ATTRIBUTE);
 			let id     = formId ? formId : ( Date.now() + "" );
 			if (formId === null) {
-				aForm.setAttribute(kLOGIN_FORM_ID_ATTRIBUTE, id);
+				aForm.setAttribute(LOGIN_FORM_ID_ATTRIBUTE, id);
 			}
 
 			loginInfo = new SecureLoginInfo(aLoginInfo, aFormActionURI, aForm, id);
@@ -186,7 +186,7 @@ SecureloginContent.prototype = {
 	 */
 	highlightElement: function (aElement) {
 		let style = aElement.style;
-		style.backgroundColor = kLOGIN_FORM_HIGHLIGHT_COLOR;
+		style.backgroundColor = LOGIN_FORM_HIGHLIGHT_COLOR;
 	},
 
 	/*
@@ -563,7 +563,7 @@ SecureLoginInfo.prototype = {
 	nsILoginInfo: null,
 
 	/*
-	 * The kLOGIN_FORM_ID_ATTRIBUTE attribute of the login form.
+	 * The LOGIN_FORM_ID_ATTRIBUTE attribute of the login form.
 	 *
 	 * @type {string}
 	 */
@@ -635,7 +635,7 @@ SecureLoginInfo.prototype = {
 	 * @return {HTMLFormElement}
 	 */
 	getForm: function (aDoc) {
-		let selector = "form[" + kLOGIN_FORM_ID_ATTRIBUTE + "='" + this.formId + "']";
+		let selector = "form[" + LOGIN_FORM_ID_ATTRIBUTE + "='" + this.formId + "']";
 		return aDoc.querySelector(selector);
 	},
 

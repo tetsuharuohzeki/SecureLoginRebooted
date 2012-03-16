@@ -8,26 +8,26 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cu = Components.utils;
 
-const kPREF_NAME     = "extensions.securelogin.";
-const kSTRING_BUNDLE = "chrome://securelogin/locale/securelogin.properties";
+const PREF_NAME     = "extensions.securelogin.";
+const STRING_BUNDLE = "chrome://securelogin/locale/securelogin.properties";
 
-const kOBSERVER_TOPIC = "Securelogin";
+const OBSERVER_TOPIC = "Securelogin";
 
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 let SecureloginService = {
 
-	OBSERVER_TOPIC: kOBSERVER_TOPIC,
+	OBSERVER_TOPIC: OBSERVER_TOPIC,
 
 	get prefs () {
 		delete this.prefs;
-		return this.prefs = Services.prefs.getBranch(kPREF_NAME);
+		return this.prefs = Services.prefs.getBranch(PREF_NAME);
 	},
 
 	get stringBundle () {
 		delete this.stringBundle;
-		return this.stringBundle = Services.strings.createBundle(kSTRING_BUNDLE);
+		return this.stringBundle = Services.strings.createBundle(STRING_BUNDLE);
 	},
 
 	/*
@@ -86,14 +86,14 @@ let SecureloginService = {
 	 * @param {nsIObserver} anObserver
 	 */
 	addObserver: function (anObserver) {
-		Services.obs.addObserver(anObserver, kOBSERVER_TOPIC, true);
+		Services.obs.addObserver(anObserver, OBSERVER_TOPIC, true);
 	},
 
 	/*
 	 * @param {nsIObserver} anObserver
 	 */
 	removeObserver: function (anObserver) {
-		Services.obs.removeObserver(anObserver, kOBSERVER_TOPIC);
+		Services.obs.removeObserver(anObserver, OBSERVER_TOPIC);
 	},
 
 	/*
@@ -104,7 +104,7 @@ let SecureloginService = {
 	notifyObservers: function (aWindow, aData, aSubject) {
 		aSubject.chromeWindow = aWindow;
 		let subject = { wrappedJSObject: aSubject };
-		Services.obs.notifyObservers(subject, kOBSERVER_TOPIC, aData);
+		Services.obs.notifyObservers(subject, OBSERVER_TOPIC, aData);
 	},
 
 	initialize: function () {

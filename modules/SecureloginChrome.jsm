@@ -12,8 +12,8 @@ Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://securelogin/SecureloginService.jsm");
 
-const kDOORHANGER_NOTIFICATION_ID = "securelogin-loginFound";
-const kDOORHANGER_ANCHOR_ID       = "securelogin-notification-icon";
+const DOORHANGER_NOTIFICATION_ID = "securelogin-loginFound";
+const DOORHANGER_ANCHOR_ID       = "securelogin-notification-icon";
 
 function SecureloginChrome (aChromeWindow) {
 	this.initialize(aChromeWindow);
@@ -73,9 +73,9 @@ SecureloginChrome.prototype = {
 
 		this.window.PopupNotifications.show(
 			aBrowser,
-			kDOORHANGER_NOTIFICATION_ID,
+			DOORHANGER_NOTIFICATION_ID,
 			GetStringFromName("doorhanger.description"),
-			kDOORHANGER_ANCHOR_ID,
+			DOORHANGER_ANCHOR_ID,
 			mainAction,
 			null,
 			{
