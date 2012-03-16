@@ -85,10 +85,41 @@ let SecureloginService = {
 		let protectMode = Services.contentPrefs.getPref(aURI.prePath,
 		                                                CONTENT_PREF_USE_PROTECTION);
 		// use "loginWithProtection" value if URL doesn't have setting
-		if (!protectMode) {
+		if (protectMode === undefined) {
 			protectMode = true;
 		}
 		return (useProtection && protectMode);
+	},
+
+	/*
+	 * Get the preference whether to use the protect login.
+	 *
+	 * @param {nsIURI} aURI
+	 *   The URI which is set the preference.
+	 * @returns {boolean}
+	 */
+	getLoginMode: function (aURI) {
+		return Services.contentPrefs.getPref(aURI.prePath,
+		                                     CONTENT_PREF_USE_PROTECTION);
+	},
+
+	/*
+	 * Set the preference whether to use the protect login.
+	 *
+	 * @param {nsIURI} aURI
+	 *   The URI which is set the preference.
+	 * @param {boolean} aUseProtection
+	 *   Whether using the protected login.
+	 */
+	setLoginMode: function (aURI, aUseProtection) {
+		if (aUseProtection) {
+			Services.contentPrefs.removePref(aURI.prePath, CONTENT_PREF_USE_PROTECTION);
+		}
+		else {
+			Services.contentPrefs.setPref(aURI.prePath,
+			                              CONTENT_PREF_USE_PROTECTION,
+			                              false);
+		}
 	},
 
 	/*

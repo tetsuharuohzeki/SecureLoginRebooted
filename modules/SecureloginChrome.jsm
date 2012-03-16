@@ -71,13 +71,21 @@ SecureloginChrome.prototype = {
 			},
 		};
 
+		let switchLoginModeAction = {
+			label    : GetStringFromName("doorhanger.switchLoginMode.label"),
+			accessKey: GetStringFromName("doorhanger.switchLoginMode.accesskey"),
+			callback : function () {
+				that.switchLoginModeConfig();
+			},
+		};
+
 		this.window.PopupNotifications.show(
 			aBrowser,
 			DOORHANGER_NOTIFICATION_ID,
 			GetStringFromName("doorhanger.description"),
 			DOORHANGER_ANCHOR_ID,
 			mainAction,
-			null,
+			[switchLoginModeAction],
 			{
 				persistence        : 0,
 				timeout            : null,
@@ -140,6 +148,17 @@ SecureloginChrome.prototype = {
 			loginId = aLoginsArray[selected.value];
 		}
 		return loginId;
+	},
+
+	switchLoginModeConfig: function () {
+		let uri = this.window.gBrowser.selectedBrowser.currentURI;
+
+		let stringBundle = SecureloginService.stringBundle;
+		let title = stringBundle.GetStringFromName("prompt.switchLoginModeConfig.title");
+		let description = stringBundle.GetStringFromName("prompt.switchLoginModeConfig.description");
+		let useNormal = Services.prompt.confirm(this.window, title, description);
+
+		SecureloginService.setLoginMode(uri, !useNormal);
 	},
 
 	updateOnProgress: function (aBrowser, aContentWindow) {
