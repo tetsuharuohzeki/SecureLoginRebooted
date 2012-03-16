@@ -21,4 +21,16 @@
 		       role="button"/>
 	</box>
 
+	<keyset id="mainKeyset">
+		<key id="securelogin-keyset-login"
+			 command="securelogin-command-login"
+			 modifiers="accel, alt"
+			 key="N"/>
+	</keyset>
+
+	<commandset id="mainCommandSet">
+		<command id="securelogin-command-login"
+				 oncommand="SecureloginBrowser.loginSelectedBrowser();"/>
+	</commandset>
+
 </overlay>
