@@ -10,8 +10,9 @@ const Cu = Components.utils;
 
 const PREF_NAME     = "extensions.securelogin.";
 const STRING_BUNDLE = "chrome://securelogin/locale/securelogin.properties";
-
+const CONTENT_PREF_USE_PROTECTION = PREF_NAME + "useProtect";
 const OBSERVER_TOPIC = "Securelogin";
+
 
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -75,11 +76,19 @@ let SecureloginService = {
 
 	/*
 	 * Whether to use the protected login.
+	 * @param {nsIURI} aURI
+	 *  The checked URI.
 	 * @returns {boolean}
 	 */
-	useProtection: function () {
+	useProtection: function (aURI) {
 		let useProtection = this.prefs.getBoolPref("loginWithProtection");
-		return useProtection;
+		let protectMode = Services.contentPrefs.getPref(aURI.prePath,
+		                                                CONTENT_PREF_USE_PROTECTION);
+		// use "loginWithProtection" value if URL doesn't have setting
+		if (!protectMode) {
+			protectMode = true;
+		}
+		return (useProtection && protectMode);
 	},
 
 	/*
