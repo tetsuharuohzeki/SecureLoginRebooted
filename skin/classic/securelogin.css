@@ -11,8 +11,3 @@
 #securelogin-notification-icon {
 	list-style-image: url("chrome://mozapps/skin/passwordmgr/key-16.png");
 }
-
-#notification-popup-box[anchorid="securelogin-notification-icon"] > 
-#securelogin-notification-icon {
-	display: -moz-box;
-}
