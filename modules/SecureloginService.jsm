@@ -17,11 +17,8 @@ XPCOMUtils.defineLazyModuleGetter(this, "Services",
 const PREF_NAME     = "extensions.securelogin.";
 const STRING_BUNDLE = "chrome://securelogin/locale/securelogin.properties";
 const CONTENT_PREF_USE_PROTECTION = PREF_NAME + "useProtect";
-const OBSERVER_TOPIC = "Securelogin";
 
 let SecureloginService = {
-
-	OBSERVER_TOPIC: OBSERVER_TOPIC,
 
 	get prefs () {
 		delete this.prefs;
