@@ -33,6 +33,11 @@ let SecureloginService = {
 		return this.stringBundle = Services.strings.createBundle(STRING_BUNDLE);
 	},
 
+	get messageMap () {
+		delete this.messageMap;
+		return this.messageMap = new WeakMap();
+	},
+
 	/*
 	 * Create a nsIURI object.
 	 *
@@ -125,32 +130,78 @@ let SecureloginService = {
 	},
 
 	/*
-	 * @param {nsIObserver} anObserver
+	 * @param {Window} aWindow
+	 * @param {string} aMessageName
+	 * @param {object} aListener
 	 */
-	addObserver: function (anObserver) {
-		Services.obs.addObserver(anObserver, OBSERVER_TOPIC, true);
+	addMessageListener: function (aWindow, aMessageName, aListener) {
+		let messageList = this.messageMap.get(aWindow);
+		if (!messageList) {
+			messageList = new Map();
+		}
+
+		let listenersList = messageList.get(aMessageName);
+		if (!listenersList) {
+			listenersList = [];
+		}
+
+		listenersList.push(aListener);
+		messageList.set(aMessageName, listenersList);
+		this.messageMap.set(aWindow, messageList);
 	},
 
 	/*
-	 * @param {nsIObserver} anObserver
+	 * @param {Window} aWindow
+	 * @param {string} aMessageName
+	 * @param {object} aListener
 	 */
-	removeObserver: function (anObserver) {
-		Services.obs.removeObserver(anObserver, OBSERVER_TOPIC);
+	removeMessageListener: function (aWindow, aMessageName, aListener) {
+		let messageList = this.messageMap.get(aWindow);
+		if (!messageList) {
+			return;
+		}
+
+		let listenersList = messageList.get(aMessageName);
+		if (!listenersList) {
+			return;
+		}
+
+		let index = listenersList.indexOf(aListener);
+		if (index === -1) {
+			return;
+		}
+
+		listenersList.splice(index, 1);
+		messageList.set(aMessageName, listenersList);
+		this.messageMap.set(aWindow, messageList);
 	},
 
 	/*
-	 * @param {Window} aData
-	 * @param {string} aData
-	 * @param {object} aSubject
+	 * @param {Window} aWindow
+	 * @param {string} aMessageName
+	 * @param {object} aObject
 	 */
-	notifyObservers: function (aWindow, aData, aSubject) {
-		aSubject.chromeWindow = aWindow;
-		let subject = { wrappedJSObject: aSubject };
-		Services.obs.notifyObservers(subject, OBSERVER_TOPIC, aData);
+	sendMessage: function (aWindow, aMessageName, aObject) {
+		let messageList = this.messageMap.get(aWindow);
+		if (!messageList) {
+			return;
+		}
+
+		let listenersList = messageList.get(aMessageName);
+		if (!listenersList) {
+			return;
+		}
+
+		let message = {
+			name: aMessageName,
+			json: aObject,
+		};
+		for (let listener of listenersList) {
+			listener.receiveMessage(message);
+		}
 	},
 
 	initialize: function () {
 	},
-
 };
 SecureloginService.initialize();

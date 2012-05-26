@@ -24,9 +24,7 @@ function SecureloginChrome (aChromeWindow) {
 }
 SecureloginChrome.prototype = {
 
-	QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver,
-	                                       Ci.nsIDOMEventListener,
-	                                       Ci.nsISupportsWeakReference,
+	QueryInterface: XPCOMUtils.generateQI([Ci.nsIDOMEventListener,
 	                                       Ci.nsISupports]),
 
 	window: null,
@@ -46,11 +44,11 @@ SecureloginChrome.prototype = {
 		this.window = aChromeWindow;
 
 		aChromeWindow.addEventListener("load", this, false);
-		SecureloginService.addObserver(this);
+		SecureloginService.addMessageListener(aChromeWindow, "loginFound", this);
 	},
 
 	destroy: function () {
-		SecureloginService.removeObserver(this);
+		SecureloginService.removeMessageListener(this.window, "loginFound", this);
 		this.window = null;
 	},
 
@@ -115,8 +113,8 @@ SecureloginChrome.prototype = {
 		let loginInfo = secureLoginInfoMap.get(aBrowser);
 		if (loginInfo.location.equals(aBrowser.currentURI)) {
 			let loginId = this.getLoginId(loginInfo);
-			this.notifyObservers("login", { browser: aBrowser,
-			                                loginId: loginId });
+			this.sendMessage("login", { browser: aBrowser,
+			                            loginId: loginId });
 
 			let n = this.window.PopupNotifications.getNotification(
 			                      DOORHANGER_NOTIFICATION_ID,
@@ -177,25 +175,20 @@ SecureloginChrome.prototype = {
 	},
 
 	updateOnProgress: function (aBrowser, aContentWindow) {
-		this.notifyObservers("searchLogin", { contentWindow: aContentWindow,
-		                                     browser      : aBrowser });
+		this.sendMessage("searchLogin", { contentWindow: aContentWindow,
+		                                  browser      : aBrowser });
 	},
 
-	notifyObservers: function (aData, aSubject) {
-		SecureloginService.notifyObservers(this.window, aData, aSubject);
+	sendMessage: function (aMessageName, aObject) {
+		SecureloginService.sendMessage(this.window, aMessageName, aObject);
 	},
 
-	/* nsIObserver */
-	observe: function (aSubject, aTopic, aData) {
-		if (aTopic === SecureloginService.OBSERVER_TOPIC) {
-			let message = aSubject.wrappedJSObject;
-			switch (aData) {
-				case "loginFound":
-					if (this.window === message.chromeWindow) {
-						this.onLoginFound(message);
-					}
-					break;
-			}
+	receiveMessage: function (aMessage) {
+		let object = aMessage.json;
+		switch (aMessage.name) {
+			case "loginFound":
+				this.onLoginFound(object);
+				break;
 		}
 	},
 
