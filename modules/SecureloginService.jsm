@@ -33,6 +33,11 @@ let SecureloginService = {
 		return this.stringBundle = Services.strings.createBundle(STRING_BUNDLE);
 	},
 
+	get messageMap () {
+		delete this.messageMap;
+		return this.messageMap = new WeakMap();
+	},
+
 	/*
 	 * Create a nsIURI object.
 	 *
@@ -149,8 +154,79 @@ let SecureloginService = {
 		Services.obs.notifyObservers(subject, OBSERVER_TOPIC, aData);
 	},
 
-	initialize: function () {
+	/*
+	 * @param {Window} aWindow
+	 * @param {string} aMessageName
+	 * @param {object} aListener
+	 */
+	addMessageListener: function (aWindow, aMessageName, aListener) {
+		let messageList = this.messageMap.get(aWindow);
+		if (!messageList) {
+			messageList = new Map();
+		}
+
+		let listenersList = messageList.get(aMessageName);
+		if (!listenersList) {
+			listenersList = [];
+		}
+
+		listenersList.push(aListener);
+		messageList.set(aMessageName, listenersList);
+		this.messageMap.set(aWindow, messageList);
 	},
 
+	/*
+	 * @param {Window} aWindow
+	 * @param {string} aMessageName
+	 * @param {object} aListener
+	 */
+	removeMessageListener: function (aWindow, aMessageName, aListener) {
+		let messageList = this.messageMap.get(aWindow);
+		if (!messageList) {
+			return;
+		}
+
+		let listenersList = messageList.get(aMessageName);
+		if (!listenersList) {
+			return;
+		}
+
+		let index = listenersList.indexOf(aListener);
+		if (index === -1) {
+			return;
+		}
+
+		listenersList.splice(index, 1);
+		messageList.set(aMessageName, listenersList);
+		this.messageMap.set(aWindow, messageList);
+	},
+
+	/*
+	 * @param {Window} aWindow
+	 * @param {string} aMessageName
+	 * @param {object} aObject
+	 */
+	sendMessage: function (aWindow, aMessageName, aObject) {
+		let messageList = this.messageMap.get(aWindow);
+		if (!messageList) {
+			return;
+		}
+
+		let listenersList = messageList.get(aMessageName);
+		if (!listenersList) {
+			return;
+		}
+
+		let message = {
+			name: aMessageName,
+			json: aObject,
+		};
+		for (let listener of listenersList) {
+			listener.receiveMessage(message);
+		}
+	},
+
+	initialize: function () {
+	},
 };
 SecureloginService.initialize();
