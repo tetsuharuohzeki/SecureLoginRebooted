@@ -318,7 +318,7 @@ SecureloginContent.prototype = {
 					break;
 				case "submit":
 					/*
-					 * The current interface of nsILoginInfo does not have an identifier 
+					 * The current interface of nsILoginInfo does not have an identifier
 					 * for submit button.
 					 * This part is disable so it can't be helped.
 					 * If it needs to set submit button's value,
@@ -474,9 +474,9 @@ SecureloginContent.prototype = {
 
 		searchSubmit:
 		if (isSetPass) {
-			// The current interface of nsILoginInfo does not have an identifier 
+			// The current interface of nsILoginInfo does not have an identifier
 			// for submit button.
-			// So this part is implemented to regard first submit button 
+			// So this part is implemented to regard first submit button
 			// in the form as the "login" button.
 			// The element whose |type| attribute is in the Image Button state
 			// is not contained in |HTMLFormElement.elements|.

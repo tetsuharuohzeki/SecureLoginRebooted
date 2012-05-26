@@ -110,9 +110,9 @@ SecureloginChrome.prototype = {
 		}
 
 		let loginInfo = secureLoginInfoMap.get(aBrowser);
-		if (loginInfo.location.equals(aBrowser.currentURI)) { 
+		if (loginInfo.location.equals(aBrowser.currentURI)) {
 			let loginId = this.getLoginId(loginInfo);
-			this.notifyObservers("login", { browser: aBrowser, 
+			this.notifyObservers("login", { browser: aBrowser,
 			                                loginId: loginId });
 
 			let n = this.window.PopupNotifications.getNotification(
