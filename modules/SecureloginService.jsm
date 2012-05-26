@@ -130,31 +130,6 @@ let SecureloginService = {
 	},
 
 	/*
-	 * @param {nsIObserver} anObserver
-	 */
-	addObserver: function (anObserver) {
-		Services.obs.addObserver(anObserver, OBSERVER_TOPIC, true);
-	},
-
-	/*
-	 * @param {nsIObserver} anObserver
-	 */
-	removeObserver: function (anObserver) {
-		Services.obs.removeObserver(anObserver, OBSERVER_TOPIC);
-	},
-
-	/*
-	 * @param {Window} aData
-	 * @param {string} aData
-	 * @param {object} aSubject
-	 */
-	notifyObservers: function (aWindow, aData, aSubject) {
-		aSubject.chromeWindow = aWindow;
-		let subject = { wrappedJSObject: aSubject };
-		Services.obs.notifyObservers(subject, OBSERVER_TOPIC, aData);
-	},
-
-	/*
 	 * @param {Window} aWindow
 	 * @param {string} aMessageName
 	 * @param {object} aListener
