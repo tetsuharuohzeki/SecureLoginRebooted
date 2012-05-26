@@ -25,8 +25,6 @@ function SecureloginContent (aGlobal) {
 SecureloginContent.prototype = {
 
 	QueryInterface: XPCOMUtils.generateQI([Ci.nsIDOMEventListener,
-	                                       Ci.nsIObserver,
-	                                       Ci.nsISupportsWeakReference,
 	                                       Ci.nsISupports]),
 
 	global: null,
@@ -44,11 +42,13 @@ SecureloginContent.prototype = {
 
 	initialize: function (aGlobal) {
 		this.global = aGlobal;
-		SecureloginService.addObserver(this);
+		SecureloginService.addMessageListener(aGlobal, "searchLogin", this);
+		SecureloginService.addMessageListener(aGlobal, "login", this);
 	},
 
 	destroy: function () {
-		SecureloginService.removeObserver(this);
+		SecureloginService.removeMessageListener(this.global, "searchLogin", this);
+		SecureloginService.removeMessageListener(this.global, "login", this);
 		this.global = null;
 	},
 
@@ -203,17 +203,17 @@ SecureloginContent.prototype = {
 			return elem.username;
 		});
 
-		this.notifyObservers("loginFound", { contentWindow : aContentWindow,
-		                                     browser       : aBrowser,
-		                                     logins        : usernames });
+		this.sendMessage("loginFound", { contentWindow : aContentWindow,
+		                                 browser       : aBrowser,
+		                                 logins        : usernames });
 	},
 
 	/*
-	 * @param {string} aData
-	 * @param {object} aSubject
+	 * @param {string} aMessageName
+	 * @param {object} aObject
 	 */
-	notifyObservers: function (aData, aSubject) {
-		SecureloginService.notifyObservers(this.global, aData, aSubject);
+	sendMessage: function (aMessageName, aObject) {
+		SecureloginService.sendMessage(this.global, aMessageName, aObject);
 	},
 
 	/*
@@ -523,23 +523,15 @@ SecureloginContent.prototype = {
 		}
 	},
 
-	/* nsIObserver */
-	observe: function (aSubject, aTopic, aData) {
-		if (aTopic === SecureloginService.OBSERVER_TOPIC) {
-			let message = aSubject.wrappedJSObject;
-			let chromeWindow = message.chromeWindow;
-			switch (aData) {
-				case "searchLogin":
-					if (this.global === chromeWindow) {
-						this.searchLogin(message.browser, message.contentWindow);
-					}
-					break;
-				case "login":
-					if (this.global === chromeWindow) {
-						this.login(message.browser, message.loginId);
-					}
-					break;
-			}
+	receiveMessage: function (aMessage) {
+		let object = aMessage.json;
+		switch (aMessage.name) {
+			case "searchLogin":
+				this.searchLogin(object.browser, object.contentWindow);
+				break;
+			case "login":
+				this.login(object.browser, object.loginId);
+				break;
 		}
 	},
 
