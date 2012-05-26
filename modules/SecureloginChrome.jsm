@@ -9,9 +9,12 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cu = Components.utils;
 
-Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
-Cu.import("resource://securelogin/SecureloginService.jsm");
+
+XPCOMUtils.defineLazyModuleGetter(this, "Services",
+                                  "resource://gre/modules/Services.jsm");
+XPCOMUtils.defineLazyModuleGetter(this, "SecureloginService",
+                                  "resource://securelogin/SecureloginService.jsm");
 
 const DOORHANGER_NOTIFICATION_ID = "securelogin-loginFound";
 const DOORHANGER_ANCHOR_ID       = "securelogin-notification-icon";
