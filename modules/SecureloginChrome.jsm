@@ -95,6 +95,7 @@ SecureloginChrome.prototype = {
 				dismissed          : true,
 				eventCallback      : null,
 				neverShow          : false,
+				removeOnDismissal  : false,
 			 }
 		);
 	},
