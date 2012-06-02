@@ -203,9 +203,8 @@ SecureloginContent.prototype = {
 			return elem.username;
 		});
 
-		this.sendMessage("loginFound", { contentWindow : aContentWindow,
-		                                 browser       : aBrowser,
-		                                 logins        : usernames });
+		this.sendMessage("loginFound", { browser: aBrowser,
+		                                 logins: usernames });
 	},
 
 	/*
