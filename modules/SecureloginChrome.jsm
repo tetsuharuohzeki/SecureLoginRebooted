@@ -15,6 +15,9 @@ XPCOMUtils.defineLazyModuleGetter(this, "Services",
                                   "resource://gre/modules/Services.jsm");
 XPCOMUtils.defineLazyModuleGetter(this, "SecureloginService",
                                   "resource://securelogin/SecureloginService.jsm");
+XPCOMUtils.defineLazyModuleGetter(this, "SecureloginContent",
+                                  "resource://securelogin/SecureloginContent.jsm");
+
 
 const DOORHANGER_NOTIFICATION_ID = "securelogin-loginFound";
 const DOORHANGER_ANCHOR_ID       = "securelogin-notification-icon";
@@ -45,9 +48,12 @@ SecureloginChrome.prototype = {
 
 		aChromeWindow.addEventListener("load", this, false);
 		SecureloginService.addMessageListener(aChromeWindow, "loginFound", this);
+		aChromeWindow.SecureloginContent = new SecureloginContent(aChromeWindow);
 	},
 
 	destroy: function () {
+		this.window.SecureloginContent.destroy();
+		this.window.SecureloginContent = null;
 		SecureloginService.removeMessageListener(this.window, "loginFound", this);
 		this.window = null;
 	},
