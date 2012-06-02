@@ -175,11 +175,6 @@ SecureloginChrome.prototype = {
 		this.showNotification(browser);
 	},
 
-	updateOnProgress: function (aBrowser, aContentWindow) {
-		this.sendMessage("searchLogin", { contentWindow: aContentWindow,
-		                                  browser      : aBrowser });
-	},
-
 	sendMessage: function (aMessageName, aObject) {
 		SecureloginService.sendMessage(this.window, aMessageName, aObject);
 	},
@@ -208,27 +203,26 @@ SecureloginChrome.prototype = {
 			case "TabClose":
 				this.onTabClose(aEvent);
 				break;
-			case "DOMContentLoaded":
-				this.onDOMLoaded(aEvent);
-				break;
 		}
 	},
 
 	onLoad: function (aEvent) {
 		let window = this.window;
 		let gBrowser = window.gBrowser;
+		let secureloginContent = window.SecureloginContent;
+
 		window.removeEventListener("load", this);
 
 		gBrowser.tabContainer.addEventListener("TabOpen", this, false);
 		gBrowser.tabContainer.addEventListener("TabClose", this, false);
-		gBrowser.addTabsProgressListener(this);
+		gBrowser.addTabsProgressListener(secureloginContent);
 
 		// Add event listener to xul:browser element,
 		// because TabOpen event is not fired when opens browser window.
 		let tabs = gBrowser.tabContainer.childNodes;
 		for (let tab of tabs) {
 			let browser = gBrowser.getBrowserForTab(tab);
-			browser.addEventListener("DOMContentLoaded", this, true, true);
+			browser.addEventListener("DOMContentLoaded", secureloginContent, true, true);
 		}
 
 		window.addEventListener("unload", this, false);
@@ -237,9 +231,11 @@ SecureloginChrome.prototype = {
 	onUnload: function (aEvent) {
 		let window = this.window;
 		let gBrowser = window.gBrowser;
+		let secureloginContent = window.SecureloginContent;
+
 		window.removeEventListener("unload", this);
 
-		gBrowser.removeTabsProgressListener(this);
+		gBrowser.removeTabsProgressListener(secureloginContent);
 		gBrowser.tabContainer.removeEventListener("TabClose", this, false);
 		gBrowser.tabContainer.removeEventListener("TabOpen", this, false);
 
@@ -248,7 +244,7 @@ SecureloginChrome.prototype = {
 		let tabs = gBrowser.tabContainer.childNodes;
 		for (let tab of tabs) {
 			let browser = gBrowser.getBrowserForTab(tab);
-			browser.removeEventListener("DOMContentLoaded", this, true);
+			browser.removeEventListener("DOMContentLoaded", secureloginContent, true);
 		}
 
 		this.destroy();
@@ -256,33 +252,14 @@ SecureloginChrome.prototype = {
 
 	onTabOpen: function (aEvent) {
 		let browser = this.window.gBrowser.getBrowserForTab(aEvent.target);
-		browser.addEventListener("DOMContentLoaded", this, true, true);
+		let secureloginContent = this.window.SecureloginContent;
+		browser.addEventListener("DOMContentLoaded", secureloginContent, true, true);
 	},
 
 	onTabClose: function (aEvent) {
 		let browser = this.window.gBrowser.getBrowserForTab(aEvent.target);
-		browser.removeEventListener("DOMContentLoaded", this, true);
-	},
-
-	onDOMLoaded: function (aEvent) {
-		let browser       = aEvent.currentTarget;
-		let contentWindow = browser.contentWindow;
-
-		// Call only if a DOMContentLoaded fires from the root document.
-		if (aEvent.target === contentWindow.document) {
-			this.updateOnProgress(browser, contentWindow);
-		}
-	},
-
-	/* ProgressListener */
-	onStateChange: function (aBrowser, aWebProgress, aRequest, aStateFlags, aStatus) {
-		// Fastback (e.g. restore the tab) doesn't fire DOMContentLoaded.
-		if ((aStateFlags & Ci.nsIWebProgressListener.STATE_RESTORING)) {
-			let isSTATE_STOP = (aStateFlags & Ci.nsIWebProgressListener.STATE_STOP);
-			if (isSTATE_STOP) {
-				this.updateOnProgress(aBrowser, aWebProgress.DOMWindow);
-			}
-		}
+		let secureloginContent = this.window.SecureloginContent;
+		browser.removeEventListener("DOMContentLoaded", secureloginContent, true);
 	},
 
 };

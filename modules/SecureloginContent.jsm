@@ -42,12 +42,10 @@ SecureloginContent.prototype = {
 
 	initialize: function (aGlobal) {
 		this.global = aGlobal;
-		SecureloginService.addMessageListener(aGlobal, "searchLogin", this);
 		SecureloginService.addMessageListener(aGlobal, "login", this);
 	},
 
 	destroy: function () {
-		SecureloginService.removeMessageListener(this.global, "searchLogin", this);
 		SecureloginService.removeMessageListener(this.global, "login", this);
 		this.global = null;
 	},
@@ -519,21 +517,41 @@ SecureloginContent.prototype = {
 	/* EventListner */
 	handleEvent: function (aEvent) {
 		switch (aEvent.type) {
+			case "DOMContentLoaded":
+				this.onDOMLoaded(aEvent);
+				break;
 		}
 	},
 
 	receiveMessage: function (aMessage) {
 		let object = aMessage.json;
 		switch (aMessage.name) {
-			case "searchLogin":
-				this.searchLogin(object.browser, object.contentWindow);
-				break;
 			case "login":
 				this.login(object.browser, object.loginId);
 				break;
 		}
 	},
 
+	onDOMLoaded: function (aEvent) {
+		let browser       = aEvent.currentTarget;
+		let contentWindow = browser.contentWindow;
+
+		// Call only if a DOMContentLoaded fires from the root document.
+		if (aEvent.target === contentWindow.document) {
+			this.searchLogin(browser, contentWindow);
+		}
+	},
+
+	/* ProgressListener */
+	onStateChange: function (aBrowser, aWebProgress, aRequest, aStateFlags, aStatus) {
+		// Fastback (e.g. restore the tab) doesn't fire DOMContentLoaded.
+		if ((aStateFlags & Ci.nsIWebProgressListener.STATE_RESTORING)) {
+			let isSTATE_STOP = (aStateFlags & Ci.nsIWebProgressListener.STATE_STOP);
+			if (isSTATE_STOP) {
+				this.searchLogin(aBrowser, aWebProgress.DOMWindow);
+			}
+		}
+	},
 };
 
 /*
