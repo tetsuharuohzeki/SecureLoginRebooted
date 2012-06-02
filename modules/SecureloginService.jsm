@@ -30,11 +30,6 @@ let SecureloginService = {
 		return this.stringBundle = Services.strings.createBundle(STRING_BUNDLE);
 	},
 
-	get messageMap () {
-		delete this.messageMap;
-		return this.messageMap = new WeakMap();
-	},
-
 	/*
 	 * Create a nsIURI object.
 	 *
@@ -132,7 +127,7 @@ let SecureloginService = {
 	 * @param {object} aListener
 	 */
 	addMessageListener: function (aWindow, aMessageName, aListener) {
-		let messageList = this.messageMap.get(aWindow);
+		let messageList = messageMap.get(aWindow);
 		if (!messageList) {
 			messageList = new Map();
 		}
@@ -144,7 +139,7 @@ let SecureloginService = {
 
 		listenersList.push(aListener);
 		messageList.set(aMessageName, listenersList);
-		this.messageMap.set(aWindow, messageList);
+		messageMap.set(aWindow, messageList);
 	},
 
 	/*
@@ -153,7 +148,7 @@ let SecureloginService = {
 	 * @param {object} aListener
 	 */
 	removeMessageListener: function (aWindow, aMessageName, aListener) {
-		let messageList = this.messageMap.get(aWindow);
+		let messageList = messageMap.get(aWindow);
 		if (!messageList) {
 			return;
 		}
@@ -170,7 +165,7 @@ let SecureloginService = {
 
 		listenersList.splice(index, 1);
 		messageList.set(aMessageName, listenersList);
-		this.messageMap.set(aWindow, messageList);
+		messageMap.set(aWindow, messageList);
 	},
 
 	/*
@@ -179,7 +174,7 @@ let SecureloginService = {
 	 * @param {object} aObject
 	 */
 	sendMessage: function (aWindow, aMessageName, aObject) {
-		let messageList = this.messageMap.get(aWindow);
+		let messageList = messageMap.get(aWindow);
 		if (!messageList) {
 			return;
 		}
@@ -202,3 +197,5 @@ let SecureloginService = {
 	},
 };
 SecureloginService.initialize();
+
+let messageMap = new WeakMap();
