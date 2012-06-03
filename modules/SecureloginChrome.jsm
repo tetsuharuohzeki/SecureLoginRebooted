@@ -22,6 +22,8 @@ XPCOMUtils.defineLazyModuleGetter(this, "SecureloginContent",
 const DOORHANGER_NOTIFICATION_ID = "securelogin-loginFound";
 const DOORHANGER_ANCHOR_ID       = "securelogin-notification-icon";
 
+let contentHandlerMap = new WeakMap();
+
 function SecureloginChrome (aChromeWindow) {
 	this.initialize(aChromeWindow);
 }
@@ -48,12 +50,11 @@ SecureloginChrome.prototype = {
 
 		aChromeWindow.addEventListener("load", this, false);
 		SecureloginService.addMessageListener(aChromeWindow, "loginFound", this);
-		aChromeWindow.SecureloginContent = new SecureloginContent(aChromeWindow);
+		contentHandlerMap.set(aChromeWindow, new SecureloginContent(aChromeWindow));
 	},
 
 	destroy: function () {
-		this.window.SecureloginContent.destroy();
-		this.window.SecureloginContent = null;
+		contentHandlerMap.get(this.window).destroy();
 		SecureloginService.removeMessageListener(this.window, "loginFound", this);
 		this.window = null;
 	},
@@ -215,7 +216,7 @@ SecureloginChrome.prototype = {
 	onLoad: function (aEvent) {
 		let window = this.window;
 		let gBrowser = window.gBrowser;
-		let secureloginContent = window.SecureloginContent;
+		let secureloginContent = contentHandlerMap.get(window);
 
 		window.removeEventListener("load", this);
 
@@ -237,7 +238,7 @@ SecureloginChrome.prototype = {
 	onUnload: function (aEvent) {
 		let window = this.window;
 		let gBrowser = window.gBrowser;
-		let secureloginContent = window.SecureloginContent;
+		let secureloginContent = contentHandlerMap.get(window);
 
 		window.removeEventListener("unload", this);
 
@@ -258,13 +259,13 @@ SecureloginChrome.prototype = {
 
 	onTabOpen: function (aEvent) {
 		let browser = this.window.gBrowser.getBrowserForTab(aEvent.target);
-		let secureloginContent = this.window.SecureloginContent;
+		let secureloginContent = contentHandlerMap.get(this.window);
 		browser.addEventListener("DOMContentLoaded", secureloginContent, true, true);
 	},
 
 	onTabClose: function (aEvent) {
 		let browser = this.window.gBrowser.getBrowserForTab(aEvent.target);
-		let secureloginContent = this.window.SecureloginContent;
+		let secureloginContent = contentHandlerMap.get(this.window);
 		browser.removeEventListener("DOMContentLoaded", secureloginContent, true);
 	},
 
