@@ -43,9 +43,11 @@ SecureloginContent.prototype = {
 	initialize: function (aGlobal) {
 		this.global = aGlobal;
 		SecureloginService.addMessageListener(aGlobal, "login", this);
+		SecureloginService.addMessageListener(aGlobal, "finalize", this);
 	},
 
 	destroy: function () {
+		SecureloginService.removeMessageListener(this.global, "finalize", this);
 		SecureloginService.removeMessageListener(this.global, "login", this);
 		this.global = null;
 	},
@@ -528,6 +530,9 @@ SecureloginContent.prototype = {
 		switch (aMessage.name) {
 			case "login":
 				this.login(object.browser, object.loginId);
+				break;
+			case "finalize":
+				this.destroy();
 				break;
 		}
 	},

@@ -54,7 +54,7 @@ SecureloginChrome.prototype = {
 	},
 
 	destroy: function () {
-		contentHandlerMap.get(this.window).destroy();
+		this.sendMessage("finalize", null);
 		SecureloginService.removeMessageListener(this.window, "loginFound", this);
 		this.window = null;
 	},
