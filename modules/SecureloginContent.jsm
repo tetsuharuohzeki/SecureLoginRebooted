@@ -203,16 +203,8 @@ SecureloginContent.prototype = {
 			return elem.username;
 		});
 
-		this.sendMessage("loginFound", { browser: aBrowser,
-		                                 logins: usernames });
-	},
-
-	/*
-	 * @param {string} aMessageName
-	 * @param {object} aObject
-	 */
-	sendMessage: function (aMessageName, aObject) {
-		SecureloginService.sendMessage(this.global, aMessageName, aObject);
+		SecureloginService.sendMessage(this.global, "loginFound", { browser: aBrowser,
+		                                                            logins: usernames });
 	},
 
 	/*

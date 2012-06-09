@@ -54,7 +54,7 @@ SecureloginChrome.prototype = {
 	},
 
 	destroy: function () {
-		this.sendMessage("finalize", null);
+		SecureloginService.sendMessage(this.window, "finalize", null);
 		SecureloginService.removeMessageListener(this.window, "loginFound", this);
 		this.window = null;
 	},
@@ -121,8 +121,8 @@ SecureloginChrome.prototype = {
 		let loginInfo = secureLoginInfoMap.get(aBrowser);
 		if (loginInfo.location.equals(aBrowser.currentURI)) {
 			let loginId = this.getLoginId(loginInfo);
-			this.sendMessage("login", { browser: aBrowser,
-			                            loginId: loginId });
+			SecureloginService.sendMessage(this.window, "login", { browser: aBrowser,
+			                                                       loginId: loginId });
 
 			let n = this.window.PopupNotifications.getNotification(
 			                      DOORHANGER_NOTIFICATION_ID,
@@ -180,10 +180,6 @@ SecureloginChrome.prototype = {
 
 		// show the notification again.
 		this.showNotification(browser);
-	},
-
-	sendMessage: function (aMessageName, aObject) {
-		SecureloginService.sendMessage(this.window, aMessageName, aObject);
 	},
 
 	receiveMessage: function (aMessage) {
