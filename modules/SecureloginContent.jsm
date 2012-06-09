@@ -68,8 +68,8 @@ SecureloginContent.prototype = {
 
 			if (savedLogins.length > 0) {
 				let infosArray = [];
-				for (let i = 0, l = savedLogins.length; i < l; i++) {
-					let info = this.searchLoginInForm(savedLogins[i], forms);
+				for (let login of savedLogins) {
+					let info = this.searchLoginInForm(login, forms);
 					if (info != null) {
 						infosArray.push(info);
 					}
