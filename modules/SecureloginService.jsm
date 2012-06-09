@@ -123,8 +123,13 @@ let SecureloginService = {
 
 	/*
 	 * @param {DOM object} aTarget
+	 *   The target object which registering a listener.
+	 *
 	 * @param {string} aMessageName
+	 *   The name of the message for which to add a listener.
+	 *
 	 * @param {object} aListener
+	 *   A listener object which will be called when receiving messages.
 	 */
 	addMessageListener: function (aTarget, aMessageName, aListener) {
 		let messageList = messageMap.get(aTarget);
@@ -144,8 +149,13 @@ let SecureloginService = {
 
 	/*
 	 * @param {DOM object} aTarget
+	 *   The target object which un-registering a listener.
+	 *
 	 * @param {string} aMessageName
+	 *   The name of the message for which to remove a listener.
+	 *
 	 * @param {object} aListener
+	 *   A listener object to stop receiving messages.
 	 */
 	removeMessageListener: function (aTarget, aMessageName, aListener) {
 		let messageList = messageMap.get(aTarget);
@@ -170,8 +180,15 @@ let SecureloginService = {
 
 	/*
 	 * @param {DOM object} aTarget
+	 *   The target object which is registered the listeners
+	 *   receiving the message.
+	 *
 	 * @param {string} aMessageName
+	 *   The name of the message to send to the listeners.
+	 *
 	 * @param {object} aObject
+	 *   An object containing to be delivered to the listeners.
+	 *   This parameter must be able to parse as JSON.
 	 */
 	sendMessage: function (aTarget, aMessageName, aObject) {
 		let messageList = messageMap.get(aTarget);
