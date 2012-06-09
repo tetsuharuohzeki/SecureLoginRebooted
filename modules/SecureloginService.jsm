@@ -122,12 +122,12 @@ let SecureloginService = {
 	},
 
 	/*
-	 * @param {Window} aWindow
+	 * @param {DOM object} aTarget
 	 * @param {string} aMessageName
 	 * @param {object} aListener
 	 */
-	addMessageListener: function (aWindow, aMessageName, aListener) {
-		let messageList = messageMap.get(aWindow);
+	addMessageListener: function (aTarget, aMessageName, aListener) {
+		let messageList = messageMap.get(aTarget);
 		if (!messageList) {
 			messageList = new Map();
 		}
@@ -139,16 +139,16 @@ let SecureloginService = {
 
 		listenersList.push(aListener);
 		messageList.set(aMessageName, listenersList);
-		messageMap.set(aWindow, messageList);
+		messageMap.set(aTarget, messageList);
 	},
 
 	/*
-	 * @param {Window} aWindow
+	 * @param {DOM object} aTarget
 	 * @param {string} aMessageName
 	 * @param {object} aListener
 	 */
-	removeMessageListener: function (aWindow, aMessageName, aListener) {
-		let messageList = messageMap.get(aWindow);
+	removeMessageListener: function (aTarget, aMessageName, aListener) {
+		let messageList = messageMap.get(aTarget);
 		if (!messageList) {
 			return;
 		}
@@ -165,16 +165,16 @@ let SecureloginService = {
 
 		listenersList.splice(index, 1);
 		messageList.set(aMessageName, listenersList);
-		messageMap.set(aWindow, messageList);
+		messageMap.set(aTarget, messageList);
 	},
 
 	/*
-	 * @param {Window} aWindow
+	 * @param {DOM object} aTarget
 	 * @param {string} aMessageName
 	 * @param {object} aObject
 	 */
-	sendMessage: function (aWindow, aMessageName, aObject) {
-		let messageList = messageMap.get(aWindow);
+	sendMessage: function (aTarget, aMessageName, aObject) {
+		let messageList = messageMap.get(aTarget);
 		if (!messageList) {
 			return;
 		}
