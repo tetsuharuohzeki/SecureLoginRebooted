@@ -541,6 +541,11 @@ SecureloginContent.prototype = {
 
 	/* ProgressListener */
 	onStateChange: function (aBrowser, aWebProgress, aRequest, aStateFlags, aStatus) {
+		// only a document request complete.
+		if (!(aStateFlags & Ci.nsIWebProgressListener.STATE_IS_DOCUMENT)) {
+			return;
+		}
+
 		// Fastback (e.g. restore the tab) doesn't fire DOMContentLoaded.
 		if ((aStateFlags & Ci.nsIWebProgressListener.STATE_RESTORING)) {
 			let isSTATE_STOP = (aStateFlags & Ci.nsIWebProgressListener.STATE_STOP);
