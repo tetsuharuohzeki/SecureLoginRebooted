@@ -18,6 +18,9 @@ const PREF_NAME     = "extensions.securelogin.";
 const STRING_BUNDLE = "chrome://securelogin/locale/securelogin.properties";
 const CONTENT_PREF_USE_PROTECTION = PREF_NAME + "useProtect";
 
+let messageMap = new WeakMap();
+
+
 let SecureloginService = {
 
 	get prefs () {
@@ -215,4 +218,3 @@ let SecureloginService = {
 };
 SecureloginService.initialize();
 
-let messageMap = new WeakMap();
