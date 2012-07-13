@@ -19,6 +19,8 @@ XPCOMUtils.defineLazyModuleGetter(this, "SecureloginService",
 const LOGIN_FORM_HIGHLIGHT_COLOR = "#ffd700";
 const LOGIN_FORM_ID_ATTRIBUTE    = "data-securelogin-form-id";
 
+let loginInfoMap = new WeakMap();
+
 function SecureloginContent (aGlobal) {
 	this.initialize(aGlobal);
 }
@@ -28,17 +30,6 @@ SecureloginContent.prototype = {
 	                                       Ci.nsISupports]),
 
 	global: null,
-
-	get secureLoginInfoMap () {
-		let map = new WeakMap();
-		Object.defineProperty(this, "secureLoginInfoMap", {
-			value       : map,
-			writable    : true,
-			configurable: true,
-			enumerable  : true,
-		});
-		return map;
-	},
 
 	initialize: function (aGlobal) {
 		this.global = aGlobal;
@@ -77,7 +68,7 @@ SecureloginContent.prototype = {
 
 				if (infosArray.length > 0) {
 					// Store the array of founded SecureLoginInfo.
-					this.secureLoginInfoMap.set(aBrowser, infosArray);
+					loginInfoMap.set(aBrowser, infosArray);
 					// Pass the array of username to UI parts.
 					this.notifyLoginsFound(aBrowser, infosArray, aContentWindow);
 				}
@@ -230,7 +221,7 @@ SecureloginContent.prototype = {
 
 	getSecureLoginInfo: function (aBrowser, aLoginDataId) {
 		let loginInfo = null;
-		let infos = this.secureLoginInfoMap.get(aBrowser);
+		let infos = loginInfoMap.get(aBrowser);
 		if (aLoginDataId && infos && infos.length > 0) {
 			let login = infos.filter(function(elm){
 				return (elm.username == aLoginDataId);

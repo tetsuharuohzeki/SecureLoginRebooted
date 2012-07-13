@@ -23,6 +23,7 @@ const DOORHANGER_NOTIFICATION_ID = "securelogin-loginFound";
 const DOORHANGER_ANCHOR_ID       = "securelogin-notification-icon";
 
 let contentHandlerMap = new WeakMap();
+let secureLoginInfoMap = new WeakMap();
 
 function SecureloginChrome (aChromeWindow) {
 	this.initialize(aChromeWindow);
@@ -33,17 +34,6 @@ SecureloginChrome.prototype = {
 	                                       Ci.nsISupports]),
 
 	window: null,
-
-	get secureLoginInfoMap () {
-		let map = new WeakMap();
-		Object.defineProperty(this, "secureLoginInfoMap", {
-			value       : map,
-			writable    : true,
-			configurable: true,
-			enumerable  : true,
-		});
-		return map;
-	},
 
 	initialize: function (aChromeWindow) {
 		this.window = aChromeWindow;
@@ -61,7 +51,7 @@ SecureloginChrome.prototype = {
 
 	onLoginFound: function (aMessage) {
 		let browser = aMessage.browser;
-		this.secureLoginInfoMap.set(browser, {
+		secureLoginInfoMap.set(browser, {
 			logins  : aMessage.logins,
 			location: browser.currentURI,
 		});
@@ -113,7 +103,6 @@ SecureloginChrome.prototype = {
 	},
 
 	login: function (aBrowser) {
-		let secureLoginInfoMap = this.secureLoginInfoMap;
 		if (!secureLoginInfoMap.has(aBrowser)) {
 			return;
 		}
