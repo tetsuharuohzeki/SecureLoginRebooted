@@ -213,7 +213,7 @@ SecureloginChrome.prototype = {
 		// because TabOpen event is not fired when opens browser window.
 		let tabs = gBrowser.tabContainer.childNodes;
 		for (let tab of tabs) {
-			let browser = gBrowser.getBrowserForTab(tab);
+			let browser = tab.linkedBrowser;
 			browser.addEventListener("DOMContentLoaded", secureloginContent, true, true);
 		}
 
@@ -235,7 +235,7 @@ SecureloginChrome.prototype = {
 		// because TabClose event is not fired when closes browser window.
 		let tabs = gBrowser.tabContainer.childNodes;
 		for (let tab of tabs) {
-			let browser = gBrowser.getBrowserForTab(tab);
+			let browser = tab.linkedBrowser;
 			browser.removeEventListener("DOMContentLoaded", secureloginContent, true);
 		}
 
@@ -243,13 +243,15 @@ SecureloginChrome.prototype = {
 	},
 
 	onTabOpen: function (aEvent) {
-		let browser = this.window.gBrowser.getBrowserForTab(aEvent.target);
+		let tab = aEvent.target;
+		let browser = tab.linkedBrowser;
 		let secureloginContent = contentHandlerMap.get(this.window);
 		browser.addEventListener("DOMContentLoaded", secureloginContent, true, true);
 	},
 
 	onTabClose: function (aEvent) {
-		let browser = this.window.gBrowser.getBrowserForTab(aEvent.target);
+		let tab = aEvent.target;
+		let browser = tab.linkedBrowser;
 		let secureloginContent = contentHandlerMap.get(this.window);
 		browser.removeEventListener("DOMContentLoaded", secureloginContent, true);
 	},
