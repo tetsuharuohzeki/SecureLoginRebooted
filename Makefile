@@ -15,7 +15,7 @@ FILE    = \
   install.rdf \
 
 
-all:  $(PACKAGE)
+all: xpi
 
-$(PACKAGE):  $(FILES)
+xpi:  $(FILES)
 	$(ZIP) $(OPTION) $(PACKAGE) $(FILE)
