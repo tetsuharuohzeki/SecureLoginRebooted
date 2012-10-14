@@ -383,11 +383,7 @@ SecureloginContent.prototype = {
 	 * @param {nsIURI}         aReferrer
 	 * @param {nsIInputStream} aPostData
 	 */
-	_loadURI: function (aBrowser, aUrl, aReferrer, aPostData) {
-		if (aPostData === undefined) {
-			aPostData = null;
-		}
-
+	_loadURI: function (aBrowser, aUrl, aReferrer, aPostData = null) {
 		let flags = Ci.nsIWebNavigation.LOAD_FLAGS_NONE;
 		try {
 			aBrowser.loadURIWithFlags(aUrl, flags, aReferrer, null, aPostData);
