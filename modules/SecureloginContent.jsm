@@ -361,11 +361,11 @@ SecureloginContent.prototype = {
 		}
 		else if (method === "GET") {
 			// Remove existing parameters & add the parameter list to the uri.
-			let index = aUrl.indexOf("?");
-			if (index === -1) {
+			if (!aUrl.contains("?")) {
 				aUrl += "?" + aDataStr;
 			}
 			else {
+				let index = aUrl.indexOf("?");
 				aUrl = aUrl.substring(0, index + 1) + aDataStr;
 			}
 			// Load the uri in the browser.
