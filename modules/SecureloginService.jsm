@@ -144,10 +144,10 @@ let SecureloginService = {
 
 		let listenersList = messageList.get(aMessageName);
 		if (!listenersList) {
-			listenersList = [];
+			listenersList = new Set();
 		}
 
-		listenersList.push(aListener);
+		listenersList.add(aListener);
 		messageList.set(aMessageName, listenersList);
 		messageMap.set(aTarget, messageList);
 	},
@@ -173,12 +173,11 @@ let SecureloginService = {
 			return;
 		}
 
-		let index = listenersList.indexOf(aListener);
-		if (index === -1) {
+		if (!listenersList.has(aListener)) {
 			return;
 		}
 
-		listenersList.splice(index, 1);
+		listenersList.delete(aListener);
 		messageList.set(aMessageName, listenersList);
 		messageMap.set(aTarget, messageList);
 	},
