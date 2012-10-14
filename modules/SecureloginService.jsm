@@ -69,7 +69,7 @@ let SecureloginService = {
 	 */
 	encodeString: function (aString, aCharset) {
 		let string = "";
-		if (aCharset.toUpperCase() === "UTF-8") {
+		if (aCharset.toLowerCase() === "utf-8") {
 			string = encodeURIComponent(aString);
 		}
 		else {
