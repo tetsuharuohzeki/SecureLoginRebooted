@@ -46,10 +46,12 @@ let SecureloginService = {
 	createNsIURI: function (aURIStr, aOriginCharset, aBaseURI) {
 		let URI;
 		let io = Services.io;
+
 		try {
 			URI = io.newURI(aURIStr, aOriginCharset, null);
 		}
 		catch (e) {
+			// if aURIStr has no scheme, execute this part.
 			let resolvedStr = io.newURI(aBaseURI, aOriginCharset, null).resolve(aURIStr);
 			URI             = io.newURI(resolvedStr, aOriginCharset, null);
 		}
