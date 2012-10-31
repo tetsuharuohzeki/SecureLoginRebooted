@@ -84,12 +84,15 @@ let SecureloginService = {
 	 * Whether to use the protected login.
 	 * @param {nsIURI} aURI
 	 *  The checked URI.
+	 * @param {Window} aContext
+	 *  The window which it's can get privacy context from.
+	 *  ref: nsIContentPrefService.idl
+	 *
 	 * @returns {boolean}
 	 */
-	useProtection: function (aURI) {
+	useProtection: function (aURI, aContext) {
 		let useProtection = this.prefs.getBoolPref("loginWithProtection");
-		let protectMode = Services.contentPrefs.getPref(aURI.prePath,
-		                                                CONTENT_PREF_USE_PROTECTION);
+		let protectMode = this.getLoginMode(aURI, aContext);
 		// use "loginWithProtection" value if URL doesn't have setting
 		if (protectMode === undefined) {
 			protectMode = true;
@@ -102,11 +105,20 @@ let SecureloginService = {
 	 *
 	 * @param {nsIURI} aURI
 	 *   The URI which is set the preference.
+	 * @param {Window} aContext
+	 *  The window which it's can get privacy context from.
+	 *  ref: nsIContentPrefService.idl
+	 *
 	 * @returns {boolean}
 	 */
-	getLoginMode: function (aURI) {
+	getLoginMode: function (aURI, aContext) {
+		let context = aContext.QueryInterface(Ci.nsIInterfaceRequestor)
+		                      .getInterface(Ci.nsIWebNavigation)
+		                      .QueryInterface(Ci.nsILoadContext);
+
 		return Services.contentPrefs.getPref(aURI.prePath,
-		                                     CONTENT_PREF_USE_PROTECTION);
+		                                     CONTENT_PREF_USE_PROTECTION,
+		                                     context);
 	},
 
 	/*
@@ -116,15 +128,24 @@ let SecureloginService = {
 	 *   The URI which is set the preference.
 	 * @param {boolean} aUseProtection
 	 *   Whether using the protected login.
+	 * @param {Window} aContext
+	 *  The window which it's can get privacy context from.
+	 *  ref: nsIContentPrefService.idl
 	 */
-	setLoginMode: function (aURI, aUseProtection) {
+	setLoginMode: function (aURI, aUseProtection, aContext) {
+		let context = aContext.QueryInterface(Ci.nsIInterfaceRequestor)
+		                      .getInterface(Ci.nsIWebNavigation)
+		                      .QueryInterface(Ci.nsILoadContext);
+
 		if (aUseProtection) {
-			Services.contentPrefs.removePref(aURI.prePath, CONTENT_PREF_USE_PROTECTION);
+			Services.contentPrefs.removePref(aURI.prePath, CONTENT_PREF_USE_PROTECTION,
+			                                 context);
 		}
 		else {
 			Services.contentPrefs.setPref(aURI.prePath,
 			                              CONTENT_PREF_USE_PROTECTION,
-			                              false);
+			                              false,
+			                              context);
 		}
 	},
 

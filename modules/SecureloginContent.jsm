@@ -213,7 +213,7 @@ SecureloginContent.prototype = {
 			return Cu.reportError("No SecureLoginInfo. Please reload this page.");
 		}
 
-		if (SecureloginService.useProtection(aBrowser.currentURI)) {
+		if (SecureloginService.useProtection(aBrowser.currentURI, this.global)) {
 			this._loginWithProtection(aBrowser, info);
 		}
 		else {

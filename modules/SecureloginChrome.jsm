@@ -167,7 +167,7 @@ SecureloginChrome.prototype = {
 		let description = stringBundle.GetStringFromName("prompt.switchLoginModeConfig.description");
 		let useNormal = Services.prompt.confirm(this.window, title, description);
 
-		SecureloginService.setLoginMode(uri, !useNormal);
+		SecureloginService.setLoginMode(uri, !useNormal, this.window);
 
 		// show the notification again.
 		this.showNotification(browser);
