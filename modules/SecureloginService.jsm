@@ -41,7 +41,7 @@ let SecureloginService = {
 	 * @param   {string} aURIStr
 	 * @param   {string} aOriginCharset
 	 * @param   {string} aBaseURI
-	 * @returns {nsIURI}
+	 * @return  {nsIURI}
 	 */
 	createNsIURI: function (aURIStr, aOriginCharset, aBaseURI) {
 		let URI;
@@ -67,7 +67,7 @@ let SecureloginService = {
 	/*
 	 * @param   {string} aString
 	 * @param   {string} aCharset
-	 * @returns {string}
+	 * @return  {string}
 	 */
 	encodeString: function (aString, aCharset) {
 		let string = "";
@@ -88,7 +88,7 @@ let SecureloginService = {
 	 *  The window which it's can get privacy context from.
 	 *  ref: nsIContentPrefService.idl
 	 *
-	 * @returns {boolean}
+	 * @return  {boolean}
 	 */
 	useProtection: function (aURI, aContext) {
 		let useProtection = this.prefs.getBoolPref("loginWithProtection");
@@ -109,7 +109,7 @@ let SecureloginService = {
 	 *  The window which it's can get privacy context from.
 	 *  ref: nsIContentPrefService.idl
 	 *
-	 * @returns {boolean}
+	 * @return  {boolean}
 	 */
 	getLoginMode: function (aURI, aContext) {
 		let context = aContext.QueryInterface(Ci.nsIInterfaceRequestor)

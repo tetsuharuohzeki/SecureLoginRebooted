@@ -81,7 +81,7 @@ SecureloginContent.prototype = {
 
 	/*
 	 * @param   {string}         aURL
-	 * @returns {nsIPropertyBag}
+	 * @return  {nsIPropertyBag}
 	 */
 	_createMatchdata: function (aURL) {
 		let origin = SecureloginService.createNsIURI(aURL, null, null).prePath;
@@ -95,7 +95,7 @@ SecureloginContent.prototype = {
 	/*
 	 * @param   {nsILoginInfo}    aLoginInfo
 	 * @param   {HTMLCollection}  aForms
-	 * @returns {SecureLoginInfo}
+	 * @return  {SecureLoginInfo}
 	 */
 	searchLoginInForm: function (aLoginInfo, aForms) {
 		let info = null;
@@ -124,7 +124,7 @@ SecureloginContent.prototype = {
 	 * @param   {nsILoginInfo}    aLoginInfo
 	 * @param   {nsIURI}          aFormActionURI
 	 * @param   {HTMLFormElement} aForm
-	 * @returns {SecureLoginInfo}
+	 * @return  {SecureLoginInfo}
 	 */
 	findLoginElements: function (aLoginInfo, aFormActionURI, aForm) {
 		let loginInfo = null;
@@ -146,7 +146,7 @@ SecureloginContent.prototype = {
 	/*
 	 * @param   {nsILoginInfo}     aLoginInfo
 	 * @param   {HTMLFormElement}  aForm
-	 * @returns {Array}            Destructuring assignment.
+	 * @return  {Array}            Destructuring assignment.
 	 *          {HTMLInputElement} the username input field.
 	 *          {HTMLInputElement} the username password field.
 	 */
@@ -250,9 +250,9 @@ SecureloginContent.prototype = {
 	},
 
 	/*
-	 * @param   {SecureLoginInfo} aLoginInfo
-	 * @param   {HTMLFormElement} aForm
-	 * @returns {string}
+	 * @param  {SecureLoginInfo} aLoginInfo
+	 * @param  {HTMLFormElement} aForm
+	 * @return {string}
 	 */
 	_createDataString: function (aLoginInfo, aForm) {
 		let param    = [];
@@ -585,7 +585,7 @@ SecureLoginInfo.prototype = {
 	/*
 	 * The form action URI as string for the login.
 	 *
-	 * @returns {string}
+	 * @return {string}
 	 */
 	get formAction () {
 		return this.formActionURI.spec;
@@ -594,7 +594,7 @@ SecureLoginInfo.prototype = {
 	/*
 	 * The username for the login.
 	 *
-	 * @returns {string}
+	 * @return {string}
 	 */
 	get username () {
 		return this.nsILoginInfo.username;
@@ -603,7 +603,7 @@ SecureLoginInfo.prototype = {
 	/*
 	 * The |name| attribute for the username input field.
 	 *
-	 * @returns {string}
+	 * @return {string}
 	 */
 	get usernameField () {
 		return this.nsILoginInfo.usernameField;
@@ -612,7 +612,7 @@ SecureLoginInfo.prototype = {
 	/*
 	 * The password for the login.
 	 *
-	 * @returns {string}
+	 * @return {string}
 	 */
 	get password () {
 		return this.nsILoginInfo.password;
@@ -621,7 +621,7 @@ SecureLoginInfo.prototype = {
 	/*
 	 * The |name| attribute for the password input field.
 	 *
-	 * @returns {string}
+	 * @return {string}
 	 */
 	get passwordField () {
 		return this.nsILoginInfo.passwordField;

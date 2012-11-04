@@ -27,6 +27,11 @@ const DOORHANGER_ANCHOR_ID       = "securelogin-notification-icon";
 let contentHandlerMap = new WeakMap();
 let secureLoginInfoMap = new WeakMap();
 
+/**
+ * @constructor
+ *
+ * @param {ChromeWindow} aChromeWindow
+ */
 function SecureloginChrome (aChromeWindow) {
 	this.initialize(aChromeWindow);
 }
