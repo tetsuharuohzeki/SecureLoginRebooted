@@ -146,9 +146,9 @@ SecureloginContent.prototype = {
 	/*
 	 * @param   {nsILoginInfo}     aLoginInfo
 	 * @param   {HTMLFormElement}  aForm
-	 * @return  {Array}            Destructuring assignment.
-	 *          {HTMLInputElement} the username input field.
-	 *          {HTMLInputElement} the username password field.
+	 * @return  {Array}            for destructuring assignment.
+	 *   @0     {HTMLInputElement} the username input field.
+	 *   @1     {HTMLInputElement} the username password field.
 	 */
 	_getLoginElements: function (aLoginInfo, aForm) {
 		let [user, pass] = [null, null];
