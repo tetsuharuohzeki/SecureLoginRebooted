@@ -1,13 +1,13 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
- 
- /* doorhanger notification */
+
+/* doorhanger notification */
 .popup-notification-icon[popupid="securelogin-loginFound"] {
-	list-style-image: url("chrome://mozapps/skin/passwordmgr/key-64.png");
+  list-style-image: url("chrome://mozapps/skin/passwordmgr/key-64.png");
 }
 
 /* doorhanger anchor icon */
 #securelogin-notification-icon {
-	list-style-image: url("chrome://mozapps/skin/passwordmgr/key-16.png");
+  list-style-image: url("chrome://mozapps/skin/passwordmgr/key-16.png");
 }
