@@ -12,9 +12,7 @@ const Ci = Components.interfaces;
 const Cu = Components.utils;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
-
-XPCOMUtils.defineLazyModuleGetter(this, "Services",
-                                  "resource://gre/modules/Services.jsm");
+Cu.import("resource://gre/modules/Services.jsm");
 
 const PREF_NAME     = "extensions.securelogin.";
 const STRING_BUNDLE = "chrome://securelogin/locale/securelogin.properties";
