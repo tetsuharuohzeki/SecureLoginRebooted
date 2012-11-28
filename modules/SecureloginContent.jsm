@@ -126,19 +126,21 @@ SecureloginContent.prototype = {
    * @return  {SecureLoginInfo}
    */
   findLoginElements: function (aLoginInfo, aFormActionURI, aForm) {
-    let loginInfo = null;
     let [user, pass] = this._getLoginElements(aLoginInfo, aForm);
-    if (pass) {
-      // Set identifier
-      let formId = aForm.getAttribute(LOGIN_FORM_ID_ATTRIBUTE);
-      let id     = formId ? formId : ( Date.now() + "" );
-      if (formId === null) {
-        aForm.setAttribute(LOGIN_FORM_ID_ATTRIBUTE, id);
-      }
-
-      loginInfo = new SecureLoginInfo(aLoginInfo, aFormActionURI, aForm, id);
-      this.highlightForm(user, pass);
+    if (pass === null) {
+      return null;
     }
+
+    // Set identifier
+    let formId = aForm.getAttribute(LOGIN_FORM_ID_ATTRIBUTE);
+    let id     = formId ? formId : ( Date.now() + "" );
+    if (formId === null) {
+      aForm.setAttribute(LOGIN_FORM_ID_ATTRIBUTE, id);
+    }
+
+    let loginInfo = new SecureLoginInfo(aLoginInfo, aFormActionURI, aForm, id);
+    this.highlightForm(user, pass);
+
     return loginInfo;
   },
 
