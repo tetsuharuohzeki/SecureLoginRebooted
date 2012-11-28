@@ -96,7 +96,7 @@ SecureloginContent.prototype = {
    */
   searchLoginInForm: function (aLoginInfo, aForms) {
     let info = null;
-    for (let i = 0, l = aForms.length; i < l; i++) {
+    for (let i = 0, l = aForms.length; i < l; ++i) {
       let form = aForms[i];
       let documentURI = form.ownerDocument.documentURI;
 
@@ -266,7 +266,7 @@ SecureloginContent.prototype = {
     };
 
     // Set key & value.
-    for (let i = 0, l = elements.length; i < l; i++) {
+    for (let i = 0, l = elements.length; i < l; ++i) {
       let element = elements[i];
 
       /*
