@@ -99,21 +99,20 @@ SecureloginContent.prototype = {
     for (let i = 0, l = aForms.length; i < l; ++i) {
       let form = aForms[i];
       let documentURI = form.ownerDocument.documentURI;
+      let formActionURI = SecureloginService.createNsIURI(form.action, null, documentURI);
 
-      let formActionURI = SecureloginService.createNsIURI(form.action, null, documentURI);//nsIURI
-
+      // if the submit url have been different from this form action url,
+      // we skip this form.
       let isSameURL = (aLoginInfo.formSubmitURL === formActionURI.prePath);
+      if (!isSameURL) {
+        continue;
+      }
 
-      if (isSameURL) {
-        info = this.findLoginElements(aLoginInfo, formActionURI, form);
+      info = this.findLoginElements(aLoginInfo, formActionURI, form);
+      if (info !== null) {
         // we break to search more login form
         // when we have found a 1st one from forms in document.
-        if (info !== null) {
-          break;
-        }
-      }
-      else {
-        continue;
+        break;
       }
     }
     return info;
