@@ -106,6 +106,8 @@ SecureloginContent.prototype = {
 
       if (isSameURL) {
         info = this.findLoginElements(aLoginInfo, formActionURI, form);
+        // we break to search more login form
+        // when we have found a 1st one from forms in document.
         if (info != null) {
           break;
         }
