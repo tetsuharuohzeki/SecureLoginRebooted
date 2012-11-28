@@ -60,7 +60,7 @@ SecureloginContent.prototype = {
         let infosArray = [];
         for (let login of savedLogins) {
           let info = this.searchLoginInForm(login, forms);
-          if (info != null) {
+          if (info !== null) {
             infosArray.push(info);
           }
         }
@@ -102,13 +102,13 @@ SecureloginContent.prototype = {
 
       let formActionURI = SecureloginService.createNsIURI(form.action, null, documentURI);//nsIURI
 
-      let isSameURL = (aLoginInfo.formSubmitURL == formActionURI.prePath);
+      let isSameURL = (aLoginInfo.formSubmitURL === formActionURI.prePath);
 
       if (isSameURL) {
         info = this.findLoginElements(aLoginInfo, formActionURI, form);
         // we break to search more login form
         // when we have found a 1st one from forms in document.
-        if (info != null) {
+        if (info !== null) {
           break;
         }
       }
@@ -156,7 +156,7 @@ SecureloginContent.prototype = {
     user = elements.namedItem(aLoginInfo.usernameField);
 
     pass = elements.namedItem(aLoginInfo.passwordField);
-    if (pass && pass.type != "password") {
+    if (pass && pass.type !== "password") {
       pass = null;
     }
 
