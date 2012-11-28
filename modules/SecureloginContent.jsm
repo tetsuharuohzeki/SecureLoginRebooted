@@ -50,29 +50,32 @@ SecureloginContent.prototype = {
   searchLogin: function (aBrowser, aContentWindow) {
     let document = aContentWindow.document;
     let forms    = document.forms;
-    if (forms && forms.length > 0) {
 
-      // Get an array of nsILoginInfo which are related to the document.
-      let matchData = this._createMatchdata(document.documentURI);
-      let savedLogins = Services.logins.searchLogins({}, matchData);
+    if (!forms || forms.length === 0) {
+      return;
+    }
 
-      if (savedLogins.length > 0) {
-        let infosArray = [];
-        for (let login of savedLogins) {
-          let info = this.searchLoginInForm(login, forms);
-          if (info !== null) {
-            infosArray.push(info);
-          }
-        }
+    // Get an array of nsILoginInfo which are related to the document.
+    let matchData = this._createMatchdata(document.documentURI);
+    let savedLogins = Services.logins.searchLogins({}, matchData);
 
-        if (infosArray.length > 0) {
-          // Store the array of founded SecureLoginInfo.
-          loginInfoMap.set(aBrowser, infosArray);
-          // Pass the array of username to UI parts.
-          this.notifyLoginsFound(aBrowser, infosArray, aContentWindow);
-        }
+    if (savedLogins.length === 0) {
+      return;
+    }
 
+    let infosArray = [];
+    for (let login of savedLogins) {
+      let info = this.searchLoginInForm(login, forms);
+      if (info !== null) {
+        infosArray.push(info);
       }
+    }
+
+    if (infosArray.length > 0) {
+      // Store the array of founded SecureLoginInfo.
+      loginInfoMap.set(aBrowser, infosArray);
+      // Pass the array of username to UI parts.
+      this.notifyLoginsFound(aBrowser, infosArray, aContentWindow);
     }
   },
 
