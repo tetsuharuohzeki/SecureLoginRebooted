@@ -11,3 +11,9 @@
 #securelogin-notification-icon {
   list-style-image: url("chrome://mozapps/skin/passwordmgr/key-16.png");
 }
+
+@media (min-resolution: 2dppx) {
+  #securelogin-notification-icon {
+    list-style-image: url(chrome://mozapps/skin/passwordmgr/key-16@2x.png);
+  }
+}
