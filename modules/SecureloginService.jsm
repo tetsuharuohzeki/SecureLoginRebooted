@@ -14,6 +14,12 @@ const Cu = Components.utils;
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 
+XPCOMUtils.defineLazyGetter(this, "prefs", function () {
+  return Services.prefs.getBranch(PREF_NAME);
+});
+XPCOMUtils.defineLazyGetter(this, "stringBundle", function () {
+  return Services.strings.createBundle(STRING_BUNDLE);
+});
 XPCOMUtils.defineLazyServiceGetter(this, "TextToSubURI",
                                    "@mozilla.org/intl/texttosuburi;1",
                                    "nsITextToSubURI");
@@ -29,13 +35,11 @@ let messageMap = new WeakMap();
 let SecureloginService = {
 
   get prefs () {
-    delete this.prefs;
-    return this.prefs = Services.prefs.getBranch(PREF_NAME);
+    return prefs;
   },
 
   get stringBundle () {
-    delete this.stringBundle;
-    return this.stringBundle = Services.strings.createBundle(STRING_BUNDLE);
+    return stringBundle;
   },
 
   /*
@@ -88,7 +92,7 @@ let SecureloginService = {
    * @return  {boolean}
    */
   useProtection: function (aURI, aContext) {
-    let useProtection = this.prefs.getBoolPref("loginWithProtection");
+    let useProtection = prefs.getBoolPref("loginWithProtection");
     let protectMode = this.getLoginMode(aURI, aContext);
     // use "loginWithProtection" value if URL doesn't have setting
     if (protectMode === undefined) {
