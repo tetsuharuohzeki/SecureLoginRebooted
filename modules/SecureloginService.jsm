@@ -14,6 +14,11 @@ const Cu = Components.utils;
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 
+XPCOMUtils.defineLazyServiceGetter(this, "TextToSubURI",
+                                   "@mozilla.org/intl/texttosuburi;1",
+                                   "nsITextToSubURI");
+
+
 const PREF_NAME     = "extensions.securelogin.";
 const STRING_BUNDLE = "chrome://securelogin/locale/securelogin.properties";
 const CONTENT_PREF_USE_PROTECTION = PREF_NAME + "useProtect";
@@ -56,12 +61,6 @@ let SecureloginService = {
     return URI;
   },
 
-  get textToSubURI () {
-    delete this.textToSubURI;
-    return this.textToSubURI = Cc['@mozilla.org/intl/texttosuburi;1']
-                               .getService(Ci.nsITextToSubURI);
-  },
-
   /*
    * @param   {string} aString
    * @param   {string} aCharset
@@ -73,7 +72,7 @@ let SecureloginService = {
       string = encodeURIComponent(aString);
     }
     else {
-      string = this.textToSubURI.ConvertAndEscape(aCharset, aString);
+      string = TextToSubURI.ConvertAndEscape(aCharset, aString);
     }
     return string;
   },
