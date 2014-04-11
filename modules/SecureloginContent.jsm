@@ -216,12 +216,14 @@ SecureloginContent.prototype = {
       return Cu.reportError("No SecureLoginInfo. Please reload this page.");
     }
 
-    if (SecureloginService.useProtection(aBrowser.currentURI, this.global)) {
-      this._loginWithProtection(aBrowser, info);
-    }
-    else {
-      this._loginWithNormal(aBrowser, info);
-    }
+    SecureloginService.useProtection(aBrowser.currentURI, this.global).then((protectMode) => {
+      if (protectMode) {
+        this._loginWithProtection(aBrowser, info);
+      }
+      else {
+        this._loginWithNormal(aBrowser, info);
+      }
+    });
   },
 
   getSecureLoginInfo: function (aBrowser, aLoginDataId) {

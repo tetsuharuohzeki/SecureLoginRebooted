@@ -13,6 +13,7 @@ const Cu = Components.utils;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
+Cu.import("resource://gre/modules/Promise.jsm");
 
 XPCOMUtils.defineLazyGetter(this, "prefs", function () {
   return Services.prefs.getBranch(PREF_NAME);
@@ -23,6 +24,9 @@ XPCOMUtils.defineLazyGetter(this, "stringBundle", function () {
 XPCOMUtils.defineLazyServiceGetter(this, "TextToSubURI",
                                    "@mozilla.org/intl/texttosuburi;1",
                                    "nsITextToSubURI");
+XPCOMUtils.defineLazyServiceGetter(this, "nsIContentPrefService2",
+                                   "@mozilla.org/content-pref/service;1",
+                                   "nsIContentPrefService2");
 
 
 const PREF_NAME     = "extensions.securelogin.";
@@ -89,16 +93,21 @@ let SecureloginService = {
    *  The window which it's can get privacy context from.
    *  ref: nsIContentPrefService.idl
    *
-   * @return  {boolean}
+   * @return  {Promise<boolean>}
    */
   useProtection: function (aURI, aContext) {
     let useProtection = prefs.getBoolPref("loginWithProtection");
     let protectMode = this.getLoginMode(aURI, aContext);
-    // use "loginWithProtection" value if URL doesn't have setting
-    if (protectMode === undefined) {
-      protectMode = true;
-    }
-    return (useProtection && protectMode);
+
+    let result = protectMode.then(function (protectMode) {
+      // use "loginWithProtection" value if URL doesn't have setting
+      if (protectMode === undefined) {
+        protectMode = true;
+      }
+      return (useProtection && protectMode);
+    }, function (error) {});
+
+    return result;
   },
 
   /*
@@ -110,16 +119,41 @@ let SecureloginService = {
    *  The window which it's can get privacy context from.
    *  ref: nsIContentPrefService.idl
    *
-   * @return  {boolean}
+   * @return  {Promise<boolean>}
    */
   getLoginMode: function (aURI, aContext) {
     let context = aContext.QueryInterface(Ci.nsIInterfaceRequestor)
                           .getInterface(Ci.nsIWebNavigation)
                           .QueryInterface(Ci.nsILoadContext);
 
-    return Services.contentPrefs.getPref(aURI.prePath,
-                                         CONTENT_PREF_USE_PROTECTION,
-                                         context);
+    return new Promise(function (resolve, reject) {
+      // nsIContentPrefCallback2
+      // This is called the following order:
+      //    1. handleResult(): if there are some existed value.
+      //    2. handleCompletion(): always
+      // So if there are not any values, we need fulfill this promise
+      // on calling handleCompletion().
+      let callback = {
+        // @param {nsIContentPref}  pref
+        handleResult: function (pref) {
+          let value = pref.value;
+          resolve(value);
+        },
+
+        handleError: function (error) {
+          Cu.reportError(error);
+          reject(error);
+        },
+
+        handleCompletion: function (reason) {
+          resolve(undefined);
+        },
+      };
+
+      nsIContentPrefService2.getByDomainAndName(aURI.prePath,
+                                                CONTENT_PREF_USE_PROTECTION,
+                                                context, callback);
+    });
   },
 
   /*
@@ -139,14 +173,15 @@ let SecureloginService = {
                           .QueryInterface(Ci.nsILoadContext);
 
     if (aUseProtection) {
-      Services.contentPrefs.removePref(aURI.prePath, CONTENT_PREF_USE_PROTECTION,
-                                       context);
+      nsIContentPrefService2.removeByDomainAndName(aURI.prePath,
+                                                   CONTENT_PREF_USE_PROTECTION,
+                                                   context);
     }
     else {
-      Services.contentPrefs.setPref(aURI.prePath,
-                                    CONTENT_PREF_USE_PROTECTION,
-                                    false,
-                                    context);
+      nsIContentPrefService2.set(aURI.prePath,
+                                CONTENT_PREF_USE_PROTECTION,
+                                false,
+                                context);
     }
   },
 
