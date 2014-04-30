@@ -271,10 +271,6 @@ let SecureloginService = {
     for (let listener of listenersList) {
       listener.receiveMessage(message);
     }
-  },
-
-  initialize: function () {
-  },
+  }
 };
-SecureloginService.initialize();
 
