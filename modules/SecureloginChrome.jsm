@@ -208,6 +208,8 @@ SecureloginChrome.prototype = {
 
     window.removeEventListener("load", this);
 
+    this.initDoorHangerDOM();
+
     gBrowser.tabContainer.addEventListener("TabOpen", this, false);
     gBrowser.tabContainer.addEventListener("TabClose", this, false);
     gBrowser.addTabsProgressListener(secureloginContent);
@@ -259,4 +261,14 @@ SecureloginChrome.prototype = {
     browser.removeEventListener("DOMContentLoaded", secureloginContent, true);
   },
 
+  initDoorHangerDOM: function () {
+    let box = this.window.document.getElementById("notification-popup-box");
+
+    let img = this.window.document.createElement("image");
+    img.setAttribute("id", "securelogin-notification-icon");
+    img.setAttribute("class", "notification-anchor-icon");
+    img.setAttribute("role", "button");
+
+    box.appendChild(img);
+  },
 };
