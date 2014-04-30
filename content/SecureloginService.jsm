@@ -15,11 +15,19 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/Promise.jsm");
 
+const PREF_NAME     = "extensions.securelogin.";
+const STRING_BUNDLE = "chrome://securelogin/locale/securelogin.properties";
+const UI_STYLE_SHEET = "chrome://securelogin/skin/securelogin.css";
+const CONTENT_PREF_USE_PROTECTION = PREF_NAME + "useProtect";
+
 XPCOMUtils.defineLazyGetter(this, "prefs", function () {
   return Services.prefs.getBranch(PREF_NAME);
 });
 XPCOMUtils.defineLazyGetter(this, "stringBundle", function () {
   return Services.strings.createBundle(STRING_BUNDLE);
+});
+XPCOMUtils.defineLazyGetter(this, "gUIStyleSheetURI", function () {
+  return Services.io.newURI(UI_STYLE_SHEET, null, null);
 });
 XPCOMUtils.defineLazyServiceGetter(this, "TextToSubURI",
                                    "@mozilla.org/intl/texttosuburi;1",
@@ -27,11 +35,9 @@ XPCOMUtils.defineLazyServiceGetter(this, "TextToSubURI",
 XPCOMUtils.defineLazyServiceGetter(this, "nsIContentPrefService2",
                                    "@mozilla.org/content-pref/service;1",
                                    "nsIContentPrefService2");
-
-
-const PREF_NAME     = "extensions.securelogin.";
-const STRING_BUNDLE = "chrome://securelogin/locale/securelogin.properties";
-const CONTENT_PREF_USE_PROTECTION = PREF_NAME + "useProtect";
+XPCOMUtils.defineLazyServiceGetter(this, "nsIStyleSheetService",
+                                   "@mozilla.org/content/style-sheet-service;1",
+                                   "nsIStyleSheetService");
 
 let messageMap = new WeakMap();
 
@@ -96,7 +102,7 @@ let SecureloginService = {
    * @return  {Promise<boolean>}
    */
   useProtection: function (aURI, aContext) {
-    let useProtection = prefs.getBoolPref("loginWithProtection");
+    let useProtection = Services.prefs.getBoolPref("extensions.securelogin.loginWithProtection");
     let protectMode = this.getLoginMode(aURI, aContext);
 
     let result = protectMode.then(function (protectMode) {
@@ -271,6 +277,23 @@ let SecureloginService = {
     for (let listener of listenersList) {
       listener.receiveMessage(message);
     }
-  }
+  },
+
+  /*
+   * Register & load UI style sheet for this add-on.
+   */
+  registerUIStyleSheet: function () {
+    const type = nsIStyleSheetService.USER_SHEET;
+    nsIStyleSheetService.loadAndRegisterSheet(gUIStyleSheetURI, type);
+  },
+
+  /*
+   * Unregister & unload UI style sheet for this add-on.
+   */
+  unregisterUIStyleSheet: function () {
+    const type = nsIStyleSheetService.USER_SHEET;
+    nsIStyleSheetService.unregisterSheet(gUIStyleSheetURI, type);
+  },
+
 };
 

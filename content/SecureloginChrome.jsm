@@ -13,8 +13,8 @@ const Cu = Components.utils;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
-Cu.import("resource://securelogin/SecureloginService.jsm");
-Cu.import("resource://securelogin/SecureloginContent.jsm");
+Cu.import("chrome://securelogin/content/SecureloginService.jsm");
+Cu.import("chrome://securelogin/content/SecureloginContent.jsm");
 
 
 const DOORHANGER_NOTIFICATION_ID = "securelogin-loginFound";
@@ -30,6 +30,9 @@ let secureLoginInfoMap = new WeakMap();
  */
 function SecureloginChrome (aChromeWindow) {
   this.window = null;
+  this._DOMCommand = null;
+  this._DOMKeyset = null;
+  this._DOMDoorhander = null;
 
   this.initialize(aChromeWindow);
 }
@@ -41,14 +44,56 @@ SecureloginChrome.prototype = {
   initialize: function (aChromeWindow) {
     this.window = aChromeWindow;
 
-    aChromeWindow.addEventListener("load", this, false);
     SecureloginService.addMessageListener(aChromeWindow, "loginFound", this);
     contentHandlerMap.set(aChromeWindow, new SecureloginContent(aChromeWindow));
+
+    let gBrowser = aChromeWindow.gBrowser;
+    let secureloginContent = contentHandlerMap.get(aChromeWindow);
+
+    this._DOMDoorhander = this.initDoorHangerDOM();
+    this.initCommandSet();
+
+    gBrowser.tabContainer.addEventListener("TabOpen", this, false);
+    gBrowser.tabContainer.addEventListener("TabClose", this, false);
+    gBrowser.addTabsProgressListener(secureloginContent);
+
+    // Add event listener to xul:browser element,
+    // because TabOpen event is not fired when opens browser window.
+    let tabs = gBrowser.tabContainer.childNodes;
+    for (let tab of tabs) {
+      let browser = tab.linkedBrowser;
+      browser.addEventListener("DOMContentLoaded", secureloginContent, true, true);
+    }
+
+    aChromeWindow.addEventListener("unload", this, false);
   },
 
-  destroy: function () {
+  finalize: function () {
+    let window = this.window;
+    let gBrowser = window.gBrowser;
+    let secureloginContent = contentHandlerMap.get(window);
+
+    window.removeEventListener("unload", this);
+
+    gBrowser.removeTabsProgressListener(secureloginContent);
+    gBrowser.tabContainer.removeEventListener("TabClose", this, false);
+    gBrowser.tabContainer.removeEventListener("TabOpen", this, false);
+
+    // Remove event listener from xul:browser element,
+    // because TabClose event is not fired when closes browser window.
+    let tabs = gBrowser.tabContainer.childNodes;
+    for (let tab of tabs) {
+      let browser = tab.linkedBrowser;
+      browser.removeEventListener("DOMContentLoaded", secureloginContent, true);
+    }
+
     SecureloginService.sendMessage(this.window, "finalize", null);
     SecureloginService.removeMessageListener(this.window, "loginFound", this);
+
+    this.window = null;
+    this._DOMCommand = null;
+    this._DOMKeyset = null;
+    this._DOMDoorhander = null;
     this.window = null;
   },
 
@@ -186,9 +231,6 @@ SecureloginChrome.prototype = {
   /* EventListner */
   handleEvent: function (aEvent) {
     switch (aEvent.type) {
-      case "load":
-        this.onLoad(aEvent);
-        break;
       case "unload":
         this.onUnload(aEvent);
         break;
@@ -201,51 +243,8 @@ SecureloginChrome.prototype = {
     }
   },
 
-  onLoad: function (aEvent) {
-    let window = this.window;
-    let gBrowser = window.gBrowser;
-    let secureloginContent = contentHandlerMap.get(window);
-
-    window.removeEventListener("load", this);
-
-    this.initDoorHangerDOM();
-    this.initCommandSet();
-
-    gBrowser.tabContainer.addEventListener("TabOpen", this, false);
-    gBrowser.tabContainer.addEventListener("TabClose", this, false);
-    gBrowser.addTabsProgressListener(secureloginContent);
-
-    // Add event listener to xul:browser element,
-    // because TabOpen event is not fired when opens browser window.
-    let tabs = gBrowser.tabContainer.childNodes;
-    for (let tab of tabs) {
-      let browser = tab.linkedBrowser;
-      browser.addEventListener("DOMContentLoaded", secureloginContent, true, true);
-    }
-
-    window.addEventListener("unload", this, false);
-  },
-
   onUnload: function (aEvent) {
-    let window = this.window;
-    let gBrowser = window.gBrowser;
-    let secureloginContent = contentHandlerMap.get(window);
-
-    window.removeEventListener("unload", this);
-
-    gBrowser.removeTabsProgressListener(secureloginContent);
-    gBrowser.tabContainer.removeEventListener("TabClose", this, false);
-    gBrowser.tabContainer.removeEventListener("TabOpen", this, false);
-
-    // Remove event listener from xul:browser element,
-    // because TabClose event is not fired when closes browser window.
-    let tabs = gBrowser.tabContainer.childNodes;
-    for (let tab of tabs) {
-      let browser = tab.linkedBrowser;
-      browser.removeEventListener("DOMContentLoaded", secureloginContent, true);
-    }
-
-    this.destroy();
+    this.finalize();
   },
 
   onTabOpen: function (aEvent) {
@@ -271,11 +270,13 @@ SecureloginChrome.prototype = {
     img.setAttribute("role", "button");
 
     box.appendChild(img);
+
+    return img;
   },
 
   initCommandSet: function () {
-    this._createCommand();
-    this._createKeySet();
+    this._DOMCommand = this._createCommand();
+    this._DOMKeyset = this._createKeySet();
   },
 
   _createKeySet: function () {
@@ -287,6 +288,8 @@ SecureloginChrome.prototype = {
     key.setAttribute("key", "N");
 
     box.appendChild(key);
+
+    return key;
   },
 
   _createCommand: function () {
@@ -296,6 +299,8 @@ SecureloginChrome.prototype = {
     command.setAttribute("oncommand", "window.SecureloginBrowser.loginSelectedBrowser();");
 
     box.appendChild(command);
+
+    return command;
   },
 
 };

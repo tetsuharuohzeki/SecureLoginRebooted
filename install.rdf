@@ -7,6 +7,7 @@
   <em:id>securelogin@saneyuki_s</em:id>
   <em:version>0.2</em:version>
   <em:type>2</em:type>
+  <em:bootstrap>true</em:bootstrap>
 
   <!-- Metadata -->
   <em:name>Secure Login Rebooted</em:name>

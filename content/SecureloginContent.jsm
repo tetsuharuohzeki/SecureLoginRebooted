@@ -13,7 +13,7 @@ const Cu = Components.utils;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
-Cu.import("resource://securelogin/SecureloginService.jsm");
+Cu.import("chrome://securelogin/content/SecureloginService.jsm");
 
 const LOGIN_FORM_HIGHLIGHT_COLOR = "#ffd700";
 const LOGIN_FORM_ID_ATTRIBUTE    = "data-securelogin-form-id";
