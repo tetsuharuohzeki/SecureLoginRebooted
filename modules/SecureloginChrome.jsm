@@ -29,14 +29,14 @@ let secureLoginInfoMap = new WeakMap();
  * @param {ChromeWindow} aChromeWindow
  */
 function SecureloginChrome (aChromeWindow) {
+  this.window = null;
+
   this.initialize(aChromeWindow);
 }
 SecureloginChrome.prototype = {
 
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIDOMEventListener,
                                          Ci.nsISupports]),
-
-  window: null,
 
   initialize: function (aChromeWindow) {
     this.window = aChromeWindow;

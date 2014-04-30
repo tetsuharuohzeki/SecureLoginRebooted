@@ -21,14 +21,14 @@ const LOGIN_FORM_ID_ATTRIBUTE    = "data-securelogin-form-id";
 let loginInfoMap = new WeakMap();
 
 function SecureloginContent (aGlobal) {
+  this.global = null;
+
   this.initialize(aGlobal);
 }
 SecureloginContent.prototype = {
 
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIDOMEventListener,
                                          Ci.nsISupports]),
-
-  global: null,
 
   initialize: function (aGlobal) {
     this.global = aGlobal;
