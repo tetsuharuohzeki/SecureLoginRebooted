@@ -209,6 +209,7 @@ SecureloginChrome.prototype = {
     window.removeEventListener("load", this);
 
     this.initDoorHangerDOM();
+    this.initCommandSet();
 
     gBrowser.tabContainer.addEventListener("TabOpen", this, false);
     gBrowser.tabContainer.addEventListener("TabClose", this, false);
@@ -271,4 +272,30 @@ SecureloginChrome.prototype = {
 
     box.appendChild(img);
   },
+
+  initCommandSet: function () {
+    this._createCommand();
+    this._createKeySet();
+  },
+
+  _createKeySet: function () {
+    let box = this.window.document.getElementById("mainCommandSet");
+    let key = this.window.document.createElement("key");
+    key.setAttribute("id", "securelogin-keyset-login");
+    key.setAttribute("command", "securelogin-command-login");
+    key.setAttribute("modifiers", "accel, alt");
+    key.setAttribute("key", "N");
+
+    box.appendChild(key);
+  },
+
+  _createCommand: function () {
+    let box = this.window.document.getElementById("mainCommandSet");
+    let command = this.window.document.createElement("command");
+    command.setAttribute("id", "securelogin-command-login");
+    command.setAttribute("oncommand", "window.SecureloginBrowser.loginSelectedBrowser();");
+
+    box.appendChild(command);
+  },
+
 };
