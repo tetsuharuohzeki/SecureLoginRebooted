@@ -552,40 +552,38 @@ SecureloginContent.prototype = {
  * @param {string}          aFormId
  */
 function SecureLoginInfo (aLoginInfo, aFormActionURI, aForm, aFormId) {
-  this.nsILoginInfo  = aLoginInfo;
-  this.formActionURI = aFormActionURI;
-  this.formMethod    = aForm.method;
-  this.formId        = aFormId;
-}
-SecureLoginInfo.prototype = {
 
   /*
    * The nsILoginInfo for the login.
    *
    * @type {nsILoginInfo}
    */
-  nsILoginInfo: null,
-
-  /*
-   * The LOGIN_FORM_ID_ATTRIBUTE attribute of the login form.
-   *
-   * @type {string}
-   */
-  formId: null,
+  this.nsILoginInfo = aLoginInfo;
 
   /*
    * The form action URI as nsIURI for the login.
    *
    * @type {nsIURI}
    */
-  formActionURI: null,
+  this.formActionURI = aFormActionURI;
 
   /*
    * The form method for the login.
    *
    * @type {string}
    */
-  formMethod: null,
+  this.formMethod = aForm.method;
+
+  /*
+   * The LOGIN_FORM_ID_ATTRIBUTE attribute of the login form.
+   *
+   * @type {string}
+   */
+  this.formId = aFormId;
+
+  Object.freeze(this);
+}
+SecureLoginInfo.prototype = Object.freeze({
 
   /*
    * The form action URI as string for the login.
@@ -643,4 +641,4 @@ SecureLoginInfo.prototype = {
     return aDoc.querySelector(selector);
   },
 
-};
+});
