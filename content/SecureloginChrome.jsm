@@ -85,6 +85,7 @@ SecureloginChrome.prototype = {
     for (let tab of tabs) {
       let browser = tab.linkedBrowser;
       browser.removeEventListener("DOMContentLoaded", secureloginContent, true);
+      this._removeDoorhanger(browser);
     }
 
     SecureloginService.sendMessage(this.window, "finalize", null);
@@ -163,13 +164,14 @@ SecureloginChrome.prototype = {
       let loginId = this.getLoginId(loginInfo);
       SecureloginService.sendMessage(this.window, "login", { browser: aBrowser,
                                                              loginId: loginId });
+      this._removeDoorhanger(aBrowser);
+    }
+  },
 
-      let n = this.window.PopupNotifications.getNotification(
-                            DOORHANGER_NOTIFICATION_ID,
-                            aBrowser);
-      if (n) {
-        n.remove();
-      }
+  _removeDoorhanger: function (aBrowser) {
+    let n = this.window.PopupNotifications.getNotification(DOORHANGER_NOTIFICATION_ID, aBrowser);
+    if (n) {
+      n.remove();
     }
   },
 
