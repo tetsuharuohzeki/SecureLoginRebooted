@@ -90,7 +90,10 @@ SecureloginChrome.prototype = {
     SecureloginService.sendMessage(this.window, "finalize", null);
     SecureloginService.removeMessageListener(this.window, "loginFound", this);
 
-    this.window = null;
+    this._DOMCommand.parentNode.removeChild(this._DOMCommand);
+    this._DOMKeyset.parentNode.removeChild(this._DOMKeyset);
+    this._DOMDoorhander.parentNode.removeChild(this._DOMDoorhander);
+
     this._DOMCommand = null;
     this._DOMKeyset = null;
     this._DOMDoorhander = null;
